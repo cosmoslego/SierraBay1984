@@ -30,6 +30,17 @@
 	survive.owner = player
 	player.objectives |= survive
 
+/datum/antagonist/renegade/add_antagonist_mind(datum/mind/player, ignore_role, nonstandard_role_type, nonstandard_role_msg, bypass = FALSE)
+	if (..())
+		register_antagonist(MODE_RENEGADE, player)
+		return 1
+	else
+		return 0
+
+/datum/antagonist/renegade/remove_antagonist(datum/mind/player, show_message, implanted)
+	unregister_antagonist(MODE_RENEGADE, player)
+	return ..()
+
 /datum/antagonist/renegade/spawn_guns = list(/obj/item/selection/renegade) // Yep. This counts as gun.
 
 

@@ -39,7 +39,7 @@
   "debug.onTaskErrors": "abort",
   "dreammaker.objectTreePane": true,
   "dreammaker.autoUpdate": true,
-  "dreammaker.tickOnCreate": true,
+  "dreammaker.tickOnCreate": false,
 
   "gitlens.advanced.blame.customArguments": [
     "--ignore-revs-file", ".git-blame-ignore-revs"
