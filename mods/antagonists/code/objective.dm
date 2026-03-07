@@ -149,9 +149,6 @@ GLOBAL_LIST_EMPTY(custom_items)
 
 	mind.ShowMemory(mind.current)
 
-/datum/objective/proc/get_display_text()
-	return explanation_text
-
 /datum/objective/traitor/get_display_text()
 	return explanation_text + " <a href='byond://?src=\ref[owner];remove_objective=\ref[src]'>\[Remove\]</a>"
 

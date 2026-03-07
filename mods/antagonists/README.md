@@ -30,7 +30,9 @@ ID мода: ANTAGONISTS
 ### Изменения *кор кода*
 
 - `code/datums/mind/memory.dm`:
-  - `/datum/mind/proc/ShowMemory`
+  - `/datum/mind/ShowMemory`
+- `code/game/gamemodes/objective.dm`:
+  - `/datum/objective/get_display_text`
 <!--
   Если вы редактировали какие-либо процедуры или переменные в кор коде,
   они должны быть указаны здесь.
