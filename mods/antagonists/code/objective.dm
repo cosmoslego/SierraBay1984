@@ -131,11 +131,10 @@ GLOBAL_LIST_EMPTY(custom_items)
 
 	if(!mind)
 		return
-	var/obj_count = 0
-	for(var/datum/objective/traitor/O in mind.objectives) obj_count++
-	if(obj_count >= 3)
-		to_chat(mind.current, "You already have your objectives for today.")
+	if(mind.generated_objectives >= 3)
+		to_chat(mind.current, "You have already generated the maximum number of objectives for today.")
 		return
+	mind.generated_objectives++
 
 
 	var/datum/objective/traitor/objective = new
@@ -169,11 +168,8 @@ GLOBAL_LIST_EMPTY(custom_items)
 
 	if(href_list["get_objective"])
 		if(current && current == usr)
-			if(generated_objectives < 3)
-				generated_objectives++
-				current.get_objective()
-			else
-				to_chat(usr, "You have already generated the maximum number of objectives for today.")
+			current.get_objective()
+
 		return TRUE
 
 	return ..()
