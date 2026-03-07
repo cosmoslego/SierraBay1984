@@ -72,4 +72,3 @@
 #include "contraband_vending/_contraband_vending_includes.dm"
 #include "scp/_scp_includes.dm"
 #include "../packs/factions/fa/_pack.dm"
-#include "antagonists/_antagonists_includes.dm"

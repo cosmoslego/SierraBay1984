@@ -206,7 +206,7 @@
 	#include "../../mods/_maps/phobos/_map_phobos.dme"
 
 
-	// #include "../../mods/antagonists/_antagonists_includes.dm" // Перенесено в global_modpacks.dm
+	#include "../../mods/antagonists/_antagonists_includes.dm"
 	#include "../../mods/ascent/_ascent_includes.dm"
 	#include "../../mods/fancy_sofas/_fancy_sofas_includes.dm"
 	#include "../../mods/jukebox_tapes/_jukebox_tapes_includes.dm"
