@@ -2,6 +2,7 @@ var/global/datum/antagonist_registry/antagonist_registry = null
 
 /datum/antagonist_registry
 	var/list/registered_antagonists = list()
+	var/antagonist_spawning_complete = FALSE
 
 // only needed for traitor/renegade interactions, could be useful later
 /datum/antagonist_registry/New()
@@ -9,6 +10,9 @@ var/global/datum/antagonist_registry/antagonist_registry = null
 		MODE_TRAITOR = list(),
 		MODE_RENEGADE = list(),
 	)
+
+/datum/antagonist_registry/proc/spawning_complete()
+	antagonist_spawning_complete = TRUE
 
 /datum/antagonist_registry/proc/register(antag_type, mind)
 	if(!istype(mind, /datum/mind))
@@ -47,3 +51,20 @@ var/global/datum/antagonist_registry/antagonist_registry = null
 /proc/get_antagonists_by_type(antag_type)
 	var/datum/antagonist_registry/registry = get_antagonist_registry()
 	return registry.get_antagonists(antag_type)
+
+/proc/get_all_antagonists()
+	var/list/all_antagonists = list()
+	var/datum/antagonist_registry/registry = get_antagonist_registry()
+	for(var/antag_type in registry.registered_antagonists)
+		var/list/type_antagonists = registry.registered_antagonists[antag_type]
+		if(type_antagonists)
+			all_antagonists += type_antagonists
+	return all_antagonists
+
+// В теории должно работать. Если не сработает - все ренегаты повиснут в цикле аддтаймеров без целей.
+/datum/game_mode/create_antagonists()
+	if(..())
+		var/datum/antagonist_registry/registry = get_antagonist_registry()
+		registry.spawning_complete()
+		return TRUE
+	return FALSE

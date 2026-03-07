@@ -7,7 +7,7 @@
 	if (..())
 		register_antagonist(MODE_TRAITOR, player)
 		player.current.verbs += /mob/living/proc/get_objective
-		player.current.verbs += /mob/living/proc/show_objectives
+		player.generated_objectives = 0
 		// there is 1 second spawn in parent proc and this text should be displayed right after it
 		addtimer(new Callback(src, .proc/give_objectives_hint, player), 1.1 SECOND)
 		return 1
@@ -19,7 +19,7 @@
 	return ..()
 
 /datum/antagonist/proc/give_objectives_hint(datum/mind/player)
-	to_chat(player.current, SPAN_NOTICE("Unsure what goal to pursue? You can acquire several objectives with the \
+	to_chat(player.current, SPAN_NOTICE("Unsure what goal to pursue? You can acquire an objective with the \
 			<b>Get Objective</b> verb, located in the IC tab. These objectives are optional and don't give you \
 			the right to go on a murder spree, you still need to think of an ambition to perform the suggested goals."))
 

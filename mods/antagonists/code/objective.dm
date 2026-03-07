@@ -53,6 +53,7 @@ GLOBAL_LIST_EMPTY(custom_items)
 		GLOB.custom_items += list(new_entry)
 /datum/mind
 	var/list/used_renegade_targets = list() // renegades that are already used as targets for objectives, to avoid repetition
+	var/generated_objectives = 0
 
 /datum/objective/traitor/proc/get_available_renegade_target()
 	var/list/all_renegades = get_antagonists_by_type(MODE_RENEGADE)
@@ -147,30 +148,7 @@ GLOBAL_LIST_EMPTY(custom_items)
 
 	mind.objectives += objective
 
-	mind.show_objectives(mind.current)
-
-/mob/living/proc/show_objectives()
-	set name = "Show Objectives"
-	set category = "IC"
-	set src = usr
-
-	if(!mind)
-		return
-	mind.show_objectives(usr)
-
-/datum/mind/proc/show_objectives(mob/recipient)
-	if(!recipient)
-		return
-	if(!istype(recipient))
-		return
-
-	var/list/output = list()
-	var/obj_count = 1
-	for(var/datum/objective/O in objectives)
-		output += "<B>Objective #[obj_count]</B>: [O.get_display_text()]"
-		obj_count++
-
-	show_browser(recipient, jointext(output, "<BR>"), "window=objectives")
+	mind.ShowMemory(mind.current)
 
 /datum/objective/proc/get_display_text()
 	return explanation_text
@@ -186,12 +164,16 @@ GLOBAL_LIST_EMPTY(custom_items)
 			qdel(objective)
 			to_chat(usr, SPAN_NOTICE("You have removed an objective."))
 			log_admin("[key_name_admin(usr)] removed an objective from [key_name(current)].")
-			show_objectives(usr)
+			ShowMemory(usr)
 		return TRUE
 
 	if(href_list["get_objective"])
 		if(current && current == usr)
-			current.get_objective()
+			if(generated_objectives < 3)
+				generated_objectives++
+				current.get_objective()
+			else
+				to_chat(usr, "You have already generated the maximum number of objectives for today.")
 		return TRUE
 
 	return ..()
@@ -207,7 +189,10 @@ GLOBAL_LIST_EMPTY(custom_items)
 	explanation_text = "Stay alive until the end."
 
 /datum/objective/survive/traitor/get_display_text()
-	return explanation_text + " <a href='byond://?src=\ref[owner];get_objective=1'>\[Get Objective\]</a>"
+	if(owner.generated_objectives < 3)
+		return explanation_text + " <a href='byond://?src=\ref[owner];get_objective=1'>\[Get Objective\]</a>"
+	else
+		return explanation_text
 
 
 /datum/objective/hijack
@@ -221,3 +206,20 @@ GLOBAL_LIST_EMPTY(custom_items)
 		"Phaeton"
 	)
 	explanation_text = "Hijack [pick(shuttles)]"
+
+/datum/objective/renegade/New(datum/mind/new_target)
+	if(new_target)
+		set_target(new_target)
+
+/datum/objective/renegade/proc/set_target(datum/mind/new_target)
+	if(new_target)
+		target = new_target
+
+	if(!target)
+		return FALSE
+
+	if(target?.current)
+		explanation_text = "[target.current.real_name], the [target.assigned_role] seems to be a threat."
+	else
+		explanation_text = "[target] seems to be a threat."
+	return TRUE
