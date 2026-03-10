@@ -32,39 +32,6 @@
 			M.show_inv(usr)
 	return ..()
 
-// Fix update_state to not delete holder prematurely when being moved
-/obj/item/holder/update_state()
-	// Don't process if loc is null (being moved/deleted)
-	if(!loc)
-		return
-	
-	// Don't release mobs if holder is inside a storage item
-	// This prevents the holder from being deleted while being dragged out
-	if(istype(loc, /obj/item/storage))
-		if(last_holder != loc)
-			for(var/mob/M in contents)
-				unregister_all_movement(last_holder, M)
-				register_all_movement(loc, M)
-		last_holder = loc
-		return
-	
-	// Original behavior for other locations
-	if(last_holder != loc)
-		for(var/mob/M in contents)
-			unregister_all_movement(last_holder, M)
-
-	if(istype(loc,/turf) || !(length(contents)))
-		for(var/mob/M in contents)
-			var/atom/movable/mob_container = M
-			mob_container.dropInto(loc)
-			M.reset_view()
-		qdel(src)
-	else if(last_holder != loc)
-		for(var/mob/M in contents)
-			register_all_movement(loc, M)
-
-	last_holder = loc
-
 /mob/living/proc/can_fit_in_storage(obj/item/storage/S)
 	var/storage_space = S.max_storage_space
 	if(isnull(storage_space) && S.storage_slots)
