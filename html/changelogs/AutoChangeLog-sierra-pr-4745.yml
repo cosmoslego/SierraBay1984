@@ -1,0 +1,5 @@
+author: kartowkar
+changes:
+  - rscadd: Оптические Сенсоры ИПС больше не получают дамаг от токсичных газов в
+      атмосфере
+delete-after: true
