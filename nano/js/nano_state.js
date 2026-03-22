@@ -67,20 +67,28 @@ function nanoDiffNodes(oldNode, newNode) {
 // Syncs attributes of oldEl to match newEl without touching unchanged ones.
 function nanoDiffAttrs(oldEl, newEl) {
   var i, attr
+  var $old = $(oldEl)
   for (i = oldEl.attributes.length - 1; i >= 0; i--) {
     attr = oldEl.attributes[i]
-    if (!newEl.hasAttribute(attr.name))
+    if (!newEl.hasAttribute(attr.name)) {
       oldEl.removeAttribute(attr.name)
+      if (attr.name.indexOf('data-') === 0)
+        $old.removeData(attr.name.slice(5))
+    }
   }
   for (i = 0; i < newEl.attributes.length; i++) {
     attr = newEl.attributes[i]
-    if (oldEl.getAttribute(attr.name) !== attr.value)
+    if (oldEl.getAttribute(attr.name) !== attr.value) {
       oldEl.setAttribute(attr.name, attr.value)
+      if (attr.name.indexOf('data-') === 0)
+        $old.removeData(attr.name.slice(5))
+    }
   }
 }
 
 // Renders newHtml into container using DOM diffing.
 // Falls back to innerHTML on first render (when container is empty).
+// newHtml is pre-rendered by NanoTemplate.parse() (jsrender) which HTML-escapes data by default.
 function nanoPatchHtml(container, newHtml) {
   var el = container[0]
   if (!el) return
