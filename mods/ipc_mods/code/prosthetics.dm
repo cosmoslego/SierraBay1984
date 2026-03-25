@@ -519,7 +519,6 @@
 /datum/robolimb/resomi
 	company = "Small prosthetic"
 	desc = "This prosthetic is small and fit for nonhuman proportions."
-	icon = 'mods/resomi/icons/resomi_main.dmi'
 	armor = list(
 		melee = 2,
 		bullet = 0,
