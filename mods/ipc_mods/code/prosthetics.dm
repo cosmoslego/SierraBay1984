@@ -71,7 +71,7 @@
 	if(company)
 		var/datum/robolimb/R = all_robolimbs[company]
 		if(!istype(R) || (species && (species.name in R.species_cannot_use)) || \
-			(species && !(species.get_bodytype(owner) in R.allowed_bodytypes)) || \
+			// (species && !(species.get_bodytype(owner) in R.allowed_bodytypes)) || \ легаси код оффов
 			(length(R.applies_to_part) && !(organ_tag in R.applies_to_part)))
 			R = basic_robolimb
 		else
@@ -519,6 +519,7 @@
 /datum/robolimb/resomi
 	company = "Small prosthetic"
 	desc = "This prosthetic is small and fit for nonhuman proportions."
+//	icon = 'mods/resomi/icons/resomi_main.dmi'
 	armor = list(
 		melee = 2,
 		bullet = 0,
