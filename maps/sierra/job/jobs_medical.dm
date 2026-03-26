@@ -59,7 +59,7 @@
 	вкупе с предоперационным лечением пострадавших, спектр активности хирурга является несколько более широким, начиная от обычного лечения медикаментами в случае необходимости и заканчивая проведением сложных хирургических операций."
 
 /datum/job/doctor
-	title = "Paramedic"
+	title = "Emergency Medical Technician"
 	supervisors = "Главному Врачу"
 	department = "Медицинский"
 	department_flag = MED
@@ -72,9 +72,9 @@
 	skill_points = 22
 
 	alt_titles = list(
-		"Emergency Medical Technician" = /singleton/hierarchy/outfit/job/sierra/crew/medical/paramedic/emt
+		"Paramedic" = /singleton/hierarchy/outfit/job/sierra/crew/medical/paramedic
 	)
-	outfit_type = /singleton/hierarchy/outfit/job/sierra/crew/medical/paramedic
+	outfit_type = /singleton/hierarchy/outfit/job/sierra/crew/medical/paramedic/emt
 	allowed_branches = list(
 		/datum/mil_branch/employee,
 		/datum/mil_branch/contractor
@@ -110,7 +110,7 @@
 	return "Парамедики и медицинские техники - первые, кто окажется у пациента. Именно они эвакуируют пострадавших в ходе инцидентов, а также оказывают ПМП перед тем, как передать пациента другим специалистам."
 
 /datum/job/doctor_trainee
-	title = "Trainee Paramedic"
+	title = "Trainee EMT"
 	supervisors = "Главному Врачу и остальному медицинскому персоналу"
 	department = "Медицинский"
 	department_flag = MED
@@ -126,9 +126,9 @@
 	alt_titles = list(
 		"Orderly" = /singleton/hierarchy/outfit/job/sierra/crew/medical/doctor/orderly,
 		"Nurse" = /singleton/hierarchy/outfit/job/sierra/crew/medical/doctor/nurse,
-		"Trainee EMT" = /singleton/hierarchy/outfit/job/sierra/crew/medical/doctor/emt
+		"Trainee Paramedic" = /singleton/hierarchy/outfit/job/sierra/crew/medical/paramedic
 	)
-	outfit_type = /singleton/hierarchy/outfit/job/sierra/crew/medical/paramedic
+	outfit_type = /singleton/hierarchy/outfit/job/sierra/crew/medical/doctor/emt
 	allowed_branches = list(
 		/datum/mil_branch/employee,
 		/datum/mil_branch/contractor
