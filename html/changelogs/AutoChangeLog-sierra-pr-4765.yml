@@ -1,5 +1,0 @@
-author: Builder13
-changes:
-  - tweak: Translator implant now only accounts a number of learned languages as
-      its limit, it no longer stores known languages.
-delete-after: true
