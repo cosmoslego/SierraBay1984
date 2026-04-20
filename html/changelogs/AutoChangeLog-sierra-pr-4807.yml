@@ -1,4 +1,0 @@
-author: thekekman666
-changes:
-  - bugfix: Дистресс отправляет анонс только в "живые" сектора
-delete-after: true

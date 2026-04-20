@@ -1,6 +1,0 @@
-author: sowelipililimute
-changes:
-  - tweak: Robots now preserve their selected slot when unequipping modules
-  - tweak: Robot modules now load into/swap with the currently selected module 
-      slot
-delete-after: true
