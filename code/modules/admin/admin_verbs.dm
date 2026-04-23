@@ -106,7 +106,8 @@ var/global/list/admin_verbs_admin = list(
 	/datum/admins/proc/SetMaximumRoundLength,
 	/datum/admins/proc/ToggleContinueVote,
 	/datum/admins/proc/togglemoderequirementchecks,
-	/client/proc/delete_crew_record
+	/client/proc/delete_crew_record,
+	/datum/admins/proc/view_persistent_data		//[SIERR-ADD]
 )
 var/global/list/admin_verbs_ban = list(
 	/client/proc/unban_panel,
@@ -195,6 +196,11 @@ var/global/list/admin_verbs_debug = list(
 	/client/proc/delete_random_map,
 	/datum/admins/proc/map_template_load,
 	/datum/admins/proc/map_template_load_new_z,
+	//[SIERRA-ADD] - Colony-types,
+	/datum/admins/proc/map_template_colony_spawn_settings,
+	/datum/admins/proc/anomaly_control,
+	/client/proc/rnd_mission_debug,
+	//[SIERRA-ADD],
 	/datum/admins/proc/map_template_upload,
 	/client/proc/enable_debug_verbs,
 	/client/proc/callproc,
