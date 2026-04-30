@@ -1,6 +1,0 @@
-author: Podszywacz
-changes:
-  - tweak: Adds low temperature requirement for solid deuterium synthesis, so 
-      GAS will no longer accidentally produce solid deuterium when they are 
-      injected with or drink enough water
-delete-after: true
