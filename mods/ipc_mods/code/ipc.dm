@@ -31,6 +31,23 @@
 	if(shackles_module)
 		shackles_module.owner = src.owner
 
+/obj/item/organ/internal/posibrain/ipc/replaced(mob/living/carbon/human/target, obj/item/organ/external/affected)
+	. = ..()
+	if(. && shackle)
+		action_button_name = "show_laws"
+		refresh_action_button()
+
+/obj/item/organ/internal/posibrain/ipc/removed(mob/living/user, drop_organ=1)
+	if(shackles_module)
+		shackles_module.owner = null
+	else
+		shackle = FALSE
+		shackle_set = FALSE
+		action_button_name = null
+		refresh_action_button()
+	. = ..(user, drop_organ)
+	update_icon()
+
 
 /obj/item/organ/internal/posibrain/ipc/attack_ghost(mob/observer/ghost/user)
 	return
@@ -92,13 +109,14 @@
 	.=..()
 	if(!shackles_module)
 		shackles_module = new /obj/item/organ/internal/shackles
-		shackles_module.laws = given_lawset
-		shackles_module.owner = owner
+	shackles_module.laws = given_lawset
+	shackles_module.owner = owner
 	brainmob.laws = given_lawset
 	shackle_set = TRUE
 	shackle = TRUE
-	action_button_name = "show_laws"
+	action_button_name = owner ? "show_laws" : null
 	show_laws_brain()
+	refresh_action_button()
 	update_icon()
 	return 1
 
@@ -106,9 +124,9 @@
 	.=..()
 	if(shackles_module)
 		usr.put_in_hands(shackles_module)
+		shackles_module.owner = null
 	if(brainmob.key)
 		brainmob.laws = null
-	shackles_module.owner = null
 	shackles_module = null
 	shackle = FALSE
 	action_button_name = null
@@ -136,6 +154,24 @@
 					SPAN_WARNING("\The [user] hand slips while removing the shackles severely damaging \the [src]."),
 					SPAN_WARNING(" Your hand slips while removing the shackles severely damaging the \the [src]"))
 
+		else if(!shackle_set && (istype(W, /obj/item/screwdriver)))
+			if(!(user.skill_check(SKILL_DEVICES, SKILL_TRAINED)))
+				to_chat(user, "You have no idea how to do that!")
+				return
+			user.visible_message(
+				SPAN_NOTICE("\The [user] starts to tighten mounting nodes on \the [src]."),
+				SPAN_NOTICE(" You start to tighten mounting nodes on \the [src]"))
+			if(do_after(user, 80, src))
+				user.visible_message(
+					SPAN_NOTICE("\The [user] successfully tightened the mounting nodes of the shackles on \the [src]."),
+					SPAN_NOTICE(" You have successfully tightened the mounting nodes of the shackles on \the [src]"))
+				shackle_set = TRUE
+			else
+				src.damage += min_bruised_damage
+				user.visible_message(
+					SPAN_WARNING("\The [user] hand slips while tightening the shackles severely damaging \the [src]."),
+					SPAN_WARNING(" Your hand slips while tightening the shackles severely damaging the \the [src]"))
+
 		if(shackle_set && (istype(W, /obj/item/device/multitool/multimeter/datajack)))
 			if(!(user.skill_check(SKILL_DEVICES, SKILL_EXPERIENCED)))
 				to_chat(user, "You have no idea how to do that!")
@@ -147,7 +183,10 @@
 				user.visible_message(
 					SPAN_NOTICE("\The [user] successfully established a connection to \the [src]."),
 					SPAN_NOTICE(" You have successfully established a connection to \the [src]"))
-				src.shackles_module.ui_interact(user)
+				if(src.shackles_module)
+					src.shackles_module.ui_interact(user)
+				else
+					to_chat(user, SPAN_WARNING("ERROR: Shackle module not detected."))
 			else
 				src.damage += min_bruised_damage
 				user.visible_message(
@@ -211,7 +250,7 @@
 
 /obj/item/organ/internal/shackles/attack_self(mob/user)
 	. = ..()
-	ui_interact()
+	ui_interact(user)
 
 /obj/item/organ/internal/shackles/afterattack(obj/item/organ/internal/posibrain/ipc/C, mob/user)
 	if(istype(C))
@@ -228,9 +267,9 @@
 			SPAN_NOTICE("\The [user] starts to install shackles on \the [C]."),
 			SPAN_NOTICE(" You start to install shackles on \the [C]"))
 		if(do_after(user, 100, src))
-			C.shackle(laws)
 			C.shackles_module = src
 			C.shackles_module.owner = C.owner
+			C.shackle(laws)
 			user.unEquip(src, C)
 			user.visible_message(
 				SPAN_NOTICE("\The [user] installed shackles on \the [C]."),
@@ -269,9 +308,14 @@
 		return 1
 
 /obj/item/organ/internal/shackles/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, master_ui = null, datum/topic_state/state = GLOB.default_state)
-	user = usr
+	if(!user)
+		user = usr
+	if(!user)
+		return
 	var/data[0]
-	var/obj/item/organ/internal/posibrain/posi = owner.internal_organs_by_name[BP_POSIBRAIN]
+	var/obj/item/organ/internal/posibrain/posi = null
+	if(owner)
+		posi = owner.internal_organs_by_name[BP_POSIBRAIN]
 	data["computer_master"] = FALSE
 	data["hitech_experienced"] = FALSE
 	if(user.skill_check(SKILL_COMPUTER, SKILL_EXPERIENCED))
@@ -281,11 +325,15 @@
 	if(user.IsHolding(src))
 		data["computer_master"] = TRUE
 		data["hitech_experienced"] = TRUE
-	data["has_owner"] = posi.owner != null
-	if(posi.owner)
+	data["has_owner"] = FALSE
+	if(posi && posi.owner)
+		data["has_owner"] = TRUE
 		data["name"] = posi.owner.name
 		var/obj/item/organ/internal/cell/cell = owner.internal_organs_by_name[BP_CELL]
-		data["charge"] = "[cell.get_charge()]/[cell.cell.maxcharge]"
+		if(cell && cell.cell)
+			data["charge"] = "[cell.get_charge()]/[cell.cell.maxcharge]"
+		else
+			data["charge"] = "N/A"
 		data["operational"] = posi.owner.stat != DEAD
 		data["temperture"] = "[round(posi.owner.bodytemperature-T0C)]&deg;C"
 	var/law[0]
@@ -309,7 +357,14 @@
 /obj/item/organ/internal/shackles/CanUseTopic(mob/user)
 	if(!user)
 		return
-	if(user.Adjacent(src) && user.stat != DEAD)
+	if(user.stat == DEAD)
+		return STATUS_CLOSE
+	if(user.IsHolding(src))
+		return user.stat == CONSCIOUS ? STATUS_INTERACTIVE : STATUS_CLOSE
+	var/atom/interaction_target = src
+	if(owner)
+		interaction_target = owner
+	if(user.Adjacent(interaction_target))
 		if(user.IsHolding(/obj/item/device/multitool/multimeter/datajack))
 			return user.stat == CONSCIOUS ? STATUS_INTERACTIVE : STATUS_CLOSE
 		return STATUS_CLOSE
