@@ -1,0 +1,4 @@
+author: GarryFlint
+changes:
+  - bugfix: Исправлена выдача языков для админов
+delete-after: true
