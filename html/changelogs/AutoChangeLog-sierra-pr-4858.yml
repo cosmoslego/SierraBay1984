@@ -1,5 +1,0 @@
-author: Builder13
-changes:
-  - bugfix: Languages are now preserved upon brain removal and a fix to AI core 
-      construction.
-delete-after: true
