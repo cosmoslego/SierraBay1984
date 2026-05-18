@@ -1,0 +1,5 @@
+author: Mucker
+changes:
+  - rscadd: Add a radiation protection module for hardsuits. Printable from the 
+      mech fabricator.
+delete-after: true
