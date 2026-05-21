@@ -1,0 +1,4 @@
+author: Banditoz
+changes:
+  - tweak: Restore old cigarettes smoking time; they last longer now.
+delete-after: true
