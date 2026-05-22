@@ -1,0 +1,5 @@
+author: Banditoz
+changes:
+  - rscadd: You can now rip out organs with a verb, provided there's a large 
+      enough wound and that limb is broken!
+delete-after: true
