@@ -1,0 +1,6 @@
+author: Builder13
+changes:
+  - bugfix: Фиксит сброс языков при смене расы в VR и добавляет стандартную 
+      экипировку расы.
+  - tweak: Актуализированы карты Сиерры в NanoUI
+delete-after: true
