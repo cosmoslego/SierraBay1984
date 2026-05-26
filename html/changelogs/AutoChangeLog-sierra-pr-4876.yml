@@ -1,0 +1,8 @@
+author: thekekman666
+changes:
+  - tweak: Обновил интерфейс Follow у гостов
+  - tweak: Обновил интерфейс Teleport у гостов
+  - admin: Добавил обновленный интерфейс Player list
+  - admin: Добавил обновленный интерфейс Player panel
+  - admin: Добавил обновленный интерфейс Traitor panel
+delete-after: true
