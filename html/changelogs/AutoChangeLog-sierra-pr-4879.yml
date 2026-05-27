@@ -1,5 +1,0 @@
-author: Builder13
-changes:
-  - bugfix: Фикс Rejuvenate в VR и теперь в реальное тело должно выбрасывать 
-      даже в случае удаления виртуального тела.
-delete-after: true
