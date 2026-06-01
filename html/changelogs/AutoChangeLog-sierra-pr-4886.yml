@@ -1,0 +1,5 @@
+author: Voiko
+changes:
+  - wip: Возвращаем систему привязки аккаунта к Discord + проверка на возраст 
+      аккаунта BYOND.
+delete-after: true
