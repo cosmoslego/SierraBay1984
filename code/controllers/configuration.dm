@@ -955,6 +955,8 @@
 				use_spreading_explosions = TRUE
 			if("minimum_byondacc_age")
 				minimum_byondacc_age = text2num(value)
+			if("discord_verify")
+				discord_verify = TRUE
 			// - MC -
 			if ("base_mc_tick_rate")
 				base_mc_tick_rate = text2num(value)
