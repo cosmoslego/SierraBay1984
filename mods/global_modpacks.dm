@@ -74,6 +74,7 @@
 #include "leviathans/_leviathans_includes.dm"
 #include "turret_opt/_turret_opt_includes.dm"
 #include "carp_racing/_carp_racing_includes.dm"
+#include "~_ss220/bloom_light/_bloom_light.dme"
 #include "hallucination_overhaul/_hallucination_overhaul_includes.dm"
 #include "../packs/factions/fa/_pack.dm"
 #include "tribe/_tribe_includes.dm"
