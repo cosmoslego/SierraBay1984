@@ -1,4 +1,0 @@
-author: Voiko
-changes:
-  - bugfix: Исправлен баг, где верификация требовалась даже на локалке.
-delete-after: true
