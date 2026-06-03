@@ -1,0 +1,7 @@
+author: imjustkisik
+changes:
+  - rscadd: Добавлены настройки силы экспозиции (Exposure), блума (Bloom) и 
+      бликов ламп (Glare) в Preferences персонажа.
+  - rscadd: Портирована и адаптирована система объемного свечения ламп (Bloom 
+      Light).
+delete-after: true
