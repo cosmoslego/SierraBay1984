@@ -1,9 +1,0 @@
-author: Klearch, ArReiA
-changes:
-  - rscadd: Добавлена новая фракция Basilard Asset Recovery and Control
-  - rscadd: Добавлена униформа, берет, кепка и тэг для брони P317 - анклава 
-      BARC.
-  - rscadd: Добавлена новая бейсбольная кепка.
-  - imageadd: Добавлены спрайты для одежды новой фракции ксеносам.
-  - imageadd: 'Добавлены новые логотипы для вставки в документы: [barclogo] и [barcblacklogo].'
-delete-after: true
