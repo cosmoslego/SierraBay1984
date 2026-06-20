@@ -20,7 +20,6 @@
 	blood_volume =  SPECIES_BLOOD_DEFAULT * 0.85
 	min_age =       18
 	max_age =       45
-	strength =      STR_LOW
 
 	available_cultural_info = list(
 		TAG_CULTURE = list(
@@ -51,7 +50,10 @@
 			CULTURE_HUMAN_GAIAN,
 			CULTURE_HUMAN_OTHER
 		),
-		TAG_FACTION = list(FACTION_LUMPEN)
+		TAG_FACTION = list(
+			FACTION_LUMPEN,
+			FACTION_ASSAMBLEE
+		)
 	)
 
 	default_cultural_info = list(TAG_FACTION = FACTION_LUMPEN)
