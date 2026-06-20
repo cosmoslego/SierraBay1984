@@ -1,0 +1,9 @@
+author: Builder13
+changes:
+  - bugfix: Fixed borer-husk resurrection.
+  - bugfix: Fixed borer removal surgery steps.
+  - rscadd: Added psionics to borer-husk corpses.
+  - rscadd: Added adrenaline to basic chemicals, that borer can synthesize for 
+      their host.
+  - rscadd: Added new abilities to borer.
+delete-after: true
