@@ -1,0 +1,5 @@
+author: Builder13
+changes:
+  - rscadd: Added the ability for ghosts to possess empty borers on click.
+  - bugfix: Borer no longer takes environment damage, while inside host.
+delete-after: true
