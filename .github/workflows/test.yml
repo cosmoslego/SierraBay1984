@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - name: paths-filter
         uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d
         id: filter
@@ -32,9 +32,9 @@ jobs:
     needs: PreFlight
     if: needs.PreFlight.outputs.dm == 'true'
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - name: Setup Cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
         with:
           path: ~/spaceman_dmm/${{ env.SPACEMAN_DMM_VERSION }}
           key: ${{ runner.os }}-spacemandmm-${{ env.SPACEMAN_DMM_VERSION }}
@@ -60,9 +60,9 @@ jobs:
     - DreamChecker
     if: needs.PreFlight.outputs.dm == 'true'
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - name: Setup Cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
         with:
           path: ~/BYOND-${{ env.BYOND_MAJOR }}.${{ env.BYOND_MINOR }}
           key: ${{ runner.os }}-byond-${{ env.BYOND_MAJOR }}-${{ env.BYOND_MINOR }}
@@ -90,16 +90,16 @@ jobs:
     - DreamChecker
     if: needs.PreFlight.outputs.dm == 'true'
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - name: Setup Cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
         with:
           path: ~/BYOND-${{ env.BYOND_MAJOR }}.${{ env.BYOND_MINOR }}
           key: ${{ runner.os }}-byond-${{ env.BYOND_MAJOR }}-${{ env.BYOND_MINOR }}
       - name: Install rust_g dependencies
         run: ./scripts/install-rust_g-dependencies.sh
       - name: Setup rust_g cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
         with:
           path: ~/.byond/bin/librust_g.so
           key: "rust_g-${{ env.RUST_G_REPO }}-${{ env.RUST_G_VERSION }}"
@@ -128,16 +128,16 @@ jobs:
     - DreamChecker
     if: needs.PreFlight.outputs.dm == 'true'
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - name: Setup Cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
         with:
           path: ~/BYOND-${{ env.BYOND_MAJOR }}.${{ env.BYOND_MINOR }}
           key: ${{ runner.os }}-byond-${{ env.BYOND_MAJOR }}-${{ env.BYOND_MINOR }}
       - name: Install rust_g dependencies
         run: ./scripts/install-rust_g-dependencies.sh
       - name: Setup rust_g cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
         with:
           path: ~/.byond/bin/librust_g.so
           key: "rust_g-${{ env.RUST_G_REPO }}-${{ env.RUST_G_VERSION }}"
@@ -166,16 +166,16 @@ jobs:
     - DreamChecker
     if: needs.PreFlight.outputs.dm == 'true'
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - name: Setup Cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
         with:
           path: ~/BYOND-${{ env.BYOND_MAJOR }}.${{ env.BYOND_MINOR }}
           key: ${{ runner.os }}-byond-${{ env.BYOND_MAJOR }}-${{ env.BYOND_MINOR }}
       - name: Install rust_g dependencies
         run: ./scripts/install-rust_g-dependencies.sh
       - name: Setup rust_g cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
         with:
           path: ~/.byond/bin/librust_g.so
           key: "rust_g-${{ env.RUST_G_REPO }}-${{ env.RUST_G_VERSION }}"
