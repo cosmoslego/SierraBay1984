@@ -1,5 +1,0 @@
-author: Banditoz
-changes:
-  - tweak: Ending your message in a single or double quote (', ") won't append a
-      period at the end.
-delete-after: true
