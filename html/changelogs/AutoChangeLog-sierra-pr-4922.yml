@@ -1,0 +1,4 @@
+author: LordNest
+changes:
+  - rscdel: Убрал возможность заражаться от пыли при низком иммунитете
+delete-after: true
