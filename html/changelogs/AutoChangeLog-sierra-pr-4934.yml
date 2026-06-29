@@ -1,0 +1,4 @@
+author: AttHawk
+changes:
+  - bugfix: Zippo now can heat objects once again
+delete-after: true
