@@ -1,0 +1,4 @@
+author: Aigamuxa
+changes:
+  - experiment: Экспериментально вернул блокировку урона броней
+delete-after: true
