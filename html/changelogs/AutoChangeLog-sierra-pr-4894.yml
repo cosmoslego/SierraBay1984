@@ -1,0 +1,4 @@
+author: Banditoz
+changes:
+  - rscdel: You can no longer rip out organs.
+delete-after: true
