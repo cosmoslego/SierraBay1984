@@ -1,5 +1,0 @@
-author: Banditoz
-changes:
-  - bugfix: Fix exoplanet plants sometimes spawning broken plants when 
-      harvested.
-delete-after: true

@@ -1,5 +1,0 @@
-author: Builder13
-changes:
-  - rscadd: Рации в ВРе теперь принимают сообщения с Сиерры
-  - bugfix: Пофиксил выбор локаций в ВР импланте
-delete-after: true
