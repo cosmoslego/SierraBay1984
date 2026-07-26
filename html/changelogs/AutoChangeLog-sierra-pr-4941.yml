@@ -1,0 +1,5 @@
+author: Builder13
+changes:
+  - rscadd: НТНет теперь может работать на других уровнях при наличии там НТНет 
+      реле
+delete-after: true
