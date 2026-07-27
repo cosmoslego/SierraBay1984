@@ -1,4 +1,0 @@
-author: Builder13
-changes:
-  - bugfix: Fixed the transition of tiles upon shuttle launching.
-delete-after: true
