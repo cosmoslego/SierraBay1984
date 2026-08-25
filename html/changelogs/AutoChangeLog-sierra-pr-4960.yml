@@ -1,0 +1,5 @@
+author: Banditoz
+changes:
+  - rscadd: Firearms now have randomized serial numbers! They can be filed off 
+      with a screwdriver.
+delete-after: true
