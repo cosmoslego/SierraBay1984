@@ -1,1 +1,1 @@
-/datum/extension/armmods\guns\code\armor.dmor/under_armor_mult = 0.7
+/datum/extension/armor/under_armor_mult = 0.7
