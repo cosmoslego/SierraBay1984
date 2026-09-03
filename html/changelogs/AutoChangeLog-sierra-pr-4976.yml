@@ -1,0 +1,4 @@
+author: SansWD
+changes:
+  - bugfix: Возвращает описание профессии хирурга и биомеханика
+delete-after: true
