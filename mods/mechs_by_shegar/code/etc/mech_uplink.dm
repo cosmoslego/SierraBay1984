@@ -19,6 +19,7 @@ GLOBAL_VAR_AS(war_declared, FALSE)
 	command_announcement.Announce("В секторе была замечена телепортация большого объема телекристаллов, использующихся Горлекскими Мародерами. Рекомендуется вызвать поддержку с ЦК для урегулирования ситуации.", "Показания датчиков [station_name()]" , msg_sanitized = 1, zlevels = GLOB.using_map.station_levels)
 	GLOB.max_mech = 1
 	GLOB.war_declared = TRUE
+	open_merc_war_door()
 	return new /obj/item/stack/telecrystal(loc, 781)
 //Запрос кристаллов
 
