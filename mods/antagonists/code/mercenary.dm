@@ -733,9 +733,3 @@ Used for quick dress-up. Also comes with several discount
 	new /obj/item/storage/lunchbox/caltrops(src)
 	new /obj/item/card/emag(src)
 	new /obj/item/device/uplink_service/fake_crew_announcement(src)
-
-/proc/open_merc_war_door()
-	var/singleton/public_access/public_method/open_door = GET_SINGLETON(/singleton/public_access/public_method/open_door)
-	for(var/obj/machinery/door/blast/D as anything in SSmachines.get_machinery_of_type(/obj/machinery/door/blast))
-		if(D.id_tag == "merc_war_door")
-			open_door.perform(D)
