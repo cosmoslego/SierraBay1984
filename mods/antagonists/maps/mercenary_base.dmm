@@ -1681,8 +1681,7 @@
 /turf/simulated/floor/tiled/dark/monotile,
 /area/map_template/merc_spawn)
 "rb" = (
-/obj/paint/silver,
-/turf/simulated/wall/titanium,
+/turf/simulated/wall/titanium/bunker_map,
 /area/space)
 "rt" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -3656,6 +3655,9 @@
 	dir = 6
 	},
 /turf/simulated/floor/tiled/dark,
+/area/map_template/merc_spawn)
+"YU" = (
+/turf/simulated/wall/titanium/bunker_map,
 /area/map_template/merc_spawn)
 "YX" = (
 /obj/machinery/power/apc/hyper{
@@ -7784,7 +7786,7 @@ mo
 Mt
 zJ
 Yq
-mo
+YU
 rb
 rb
 Zl
@@ -8192,7 +8194,7 @@ mo
 tS
 lg
 DH
-mo
+YU
 rb
 rb
 Zl
