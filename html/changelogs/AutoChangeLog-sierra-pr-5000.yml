@@ -1,0 +1,4 @@
+author: Teteshnik
+changes:
+  - rscadd: Добавил блейзер с авроры в лодаут
+delete-after: true
