@@ -1,24 +1,34 @@
-#define SUCCESS 1
-#define FAILURE 0
-
 /*
  * Unit tests covering the Mercenary (nuke-ops) gamemode pipeline:
  *  - The gamemode datum and its antagonist template stay wired together sanely.
- *  - check_startable() gates on ready players and drafted antagonists the same
- *    way /datum/controller/subsystem/ticker/proc/choose_gamemode() relies on it.
- *  - Drafting synthetic candidates through the real antagonist code
- *    (attempt_spawn -> finalize_spawn -> add_antagonist) actually equips gear,
- *    hands out the uplink and the nuke objective, and sets faction - same as a
- *    live round start would.
+ *  - check_startable() gates on ready players, ready security personnel and
+ *    drafted antagonists the same way
+ *    /datum/controller/subsystem/ticker/proc/choose_gamemode() relies on it.
+ *  - Synthetic candidates drafted through the real attempt_spawn() end up
+ *    equipped, factioned and carrying an uplink and an objective.
  *
- * These tests intentionally bypass /datum/game_mode/proc/get_players_for_role()
- * and /datum/antagonist/proc/build_candidate_list(), since both require a
- * connected mob/client (client.prefs.be_special_role) that does not exist in a
- * headless CI run. Everything downstream of candidate *selection* is exercised
- * for real, since that is where equip/uplink/objective/faction regressions
- * actually happen. The client-preference lookup itself has to be checked by a
- * live, single-player smoke test instead (see mods/README.md / dev docs).
+ * Two deliberate gaps, both forced by running headless:
+ *
+ * 1. Candidate *selection* is bypassed. get_players_for_role() and
+ *    build_candidate_list() both read client.prefs.be_special_role, and there is
+ *    no connected client in a CI run. Everything downstream of selection is
+ *    exercised for real, since that is where equip/uplink/objective/faction
+ *    regressions actually happen.
+ *
+ * 2. finalize_spawn() and add_antagonist() are NOT called. add_antagonist()
+ *    routes any mind whose mob lacks a live client into create_default(), which
+ *    builds a fresh body on the antag base's own z-level. The third test drives
+ *    the in-container branch by hand instead - see the comment above that loop
+ *    for exactly which steps it reproduces and which it therefore cannot cover.
+ *
+ * Both gaps need a live single-player smoke test to close; there is no headless
+ * substitute for either.
  */
+
+#ifdef UNIT_TEST
+
+#define SUCCESS 1
+#define FAILURE 0
 
 /datum/unit_test/mercenary_gamemode_is_consistent
 	name = "MERCENARY: Gamemode and antagonist template are consistently configured"
@@ -143,7 +153,7 @@
 	if(length(problems))
 		fail("[english_list(problems)]")
 	else
-		pass("check_startable() correctly gated on required_players, required_officers and required_enemies across all scenarios.")
+		pass("check_startable() correctly gated on required_players, required_ready_job_count and required_enemies across all scenarios.")
 	return 1
 
 /// Every job title on the running map belonging to none of `department_flags` - the negative control for the counter.
@@ -332,3 +342,5 @@
 
 #undef SUCCESS
 #undef FAILURE
+
+#endif
