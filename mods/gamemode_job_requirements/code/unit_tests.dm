@@ -232,6 +232,62 @@
 	return complaints
 
 
+/datum/unit_test/mercenary_security_players_excluded
+	name = "MERCENARY: Players readied as security are not drafted as mercenaries"
+
+/datum/unit_test/mercenary_security_players_excluded/start_test()
+	var/datum/antagonist/mercenary/antag = GLOB.all_antag_types_[MODE_MERCENARY]
+	if(!istype(antag))
+		fail("Could not find the mercenary antagonist template.")
+		return 1
+
+	var/list/problems = list()
+	if(antag.excluded_ready_job_departments != SEC)
+		problems += "excluded_ready_job_departments is [antag.excluded_ready_job_departments], expected SEC ([SEC])."
+
+	var/datum/game_mode/nuclear/mode = new()
+	var/list/security_titles = mode.get_department_job_titles(SEC)
+	qdel(mode)
+
+	// Every security job must be turned away, not just the obvious ones.
+	for(var/title in security_titles)
+		if(!check_exclusion_for_title(antag, title))
+			problems += "A player readied as [title] would still be drafted as a mercenary."
+
+	// ...and nobody else may be caught by it.
+	for(var/title in SSjobs.titles_to_datums)
+		var/datum/job/job = SSjobs.titles_to_datums[title]
+		if(!job || (job.department_flag & SEC))
+			continue
+		if(check_exclusion_for_title(antag, job.title))
+			problems += "A player readied as [job.title] is wrongly excluded from being a mercenary."
+
+	// A lobby player who readied without picking a job must stay eligible.
+	if(check_exclusion_for_title(antag, null))
+		problems += "A player with no readied job is wrongly excluded from being a mercenary."
+
+	if(length(problems))
+		fail("[english_list(problems)]")
+	else
+		pass("All [length(security_titles)] security job\s are excluded from the mercenary draft, and no other job is.")
+	return 1
+
+/// Truthy (the reason string) if a lobby player readied as `title` would be refused the mercenary role.
+/datum/unit_test/mercenary_security_players_excluded/proc/check_exclusion_for_title(datum/antagonist/antag, title)
+	var/mob/new_player/merc_test_dummy/dummy = new()
+	dummy.ready = TRUE
+	dummy.test_job_title = title
+
+	var/datum/mind/mind = new /datum/mind("MercExclusionProbe")
+	mind.current = dummy
+
+	. = antag.check_ready_job_exclusion(mind)
+
+	mind.current = null
+	qdel(mind)
+	qdel(dummy)
+
+
 /datum/unit_test/mercenary_draft_and_finalize_spawn
 	name = "MERCENARY: Drafted candidates are equipped, factioned and objectived correctly"
 

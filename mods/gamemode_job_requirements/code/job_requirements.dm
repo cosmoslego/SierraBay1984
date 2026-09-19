@@ -61,6 +61,37 @@
 			titles |= job.title
 	return titles
 
+/datum/antagonist
+	/// Department flags whose readied players may not be drafted for this antagonist. 0 disables the exclusion.
+	var/excluded_ready_job_departments = 0
+
+/*
+ * Falsy if `player` may be drafted, otherwise a reason string, matching the
+ * contract of /datum/antagonist/proc/can_become_antag_detailed().
+ *
+ * The stock restricted_jobs/blacklisted_jobs lists cannot do this job for any
+ * antagonist carrying ANTAG_OVERRIDE_JOB. Those lists test player.assigned_job,
+ * but such antagonists are drafted from game_mode.pre_setup(), which runs before
+ * SSjobs.divide_occupations() - so assigned_job is still null and the lists
+ * never match. Before jobs exist, the only thing that says what a player came to
+ * do is the job they readied up as.
+ */
+/datum/antagonist/proc/check_ready_job_exclusion(datum/mind/player)
+	if(!excluded_ready_job_departments)
+		return
+	// Only meaningful in the lobby. A ghost joining mid-round has no readied job
+	// and is filtered by the usual late-join rules instead.
+	var/mob/new_player/lobby_player = player?.current
+	if(!istype(lobby_player))
+		return
+	var/title = lobby_player.get_ready_job_title()
+	if(!title)
+		return
+	var/datum/job/job = SSjobs.get_by_title(title)
+	if(!job || !(job.department_flag & excluded_ready_job_departments))
+		return
+	return "Player readied as [job.title], which is excluded from this antagonist role."
+
 /*
  * How many of `ready_players` readied up as a job from `department_flags`.
  *
