@@ -94,30 +94,28 @@
 		problems += "required_enemies is [mode.required_enemies], the scenario table expects 3."
 	if(mode.required_ready_job_count != 4)
 		problems += "required_ready_job_count is [mode.required_ready_job_count], the scenario table expects 4."
+	if(mode.required_ready_job_departments != SEC)
+		problems += "required_ready_job_departments is [mode.required_ready_job_departments], expected SEC ([SEC])."
 
-	// Every security job on the ship must count toward the same total, and
-	// nothing else may.
-	var/list/expected_jobs = list(
-		/datum/job/hos,
-		/datum/job/officer,
-		/datum/job/warden,
-		/datum/job/detective,
-		/datum/job/security_assistant
-	)
-	for(var/job_type in expected_jobs)
-		if(!(job_type in mode.required_ready_jobs))
-			problems += "required_ready_jobs is missing [job_type]."
-	for(var/job_type in mode.required_ready_jobs)
-		if(!(job_type in expected_jobs))
-			problems += "required_ready_jobs contains unexpected [job_type]."
+	// Resolved from the running map rather than hardcoded, because the security
+	// roster is per-map - Sierra's cadet job does not exist elsewhere, so naming
+	// its type here would break the build on every other map.
+	var/list/security_titles = mode.get_department_job_titles(SEC)
+	var/list/non_security_titles = get_titles_outside_departments(SEC)
 
-	var/list/security_titles = get_job_titles(expected_jobs)
-	if(length(security_titles) != length(expected_jobs))
-		problems += "Only [length(security_titles)]/[length(expected_jobs)] security jobs exist on this map."
+	// The command-tier and rank-and-file security jobs live in core, so they are
+	// safe to name on any map, and every one of them must be counted.
+	for(var/job_type in list(/datum/job/hos, /datum/job/officer, /datum/job/warden, /datum/job/detective))
+		var/datum/job/job = SSjobs.get_by_path(job_type)
+		if(!job)
+			continue
+		if(!(job.title in security_titles))
+			problems += "[job.title] is not being counted as security personnel."
 
-	var/list/non_security_titles = get_job_titles(list(/datum/job/captain))
+	if(length(security_titles) < 2)
+		problems += "Only [length(security_titles)] security job\s on this map - too few to prove the total is shared across jobs."
 	if(!length(non_security_titles))
-		problems += "/datum/job/captain does not exist on this map, so the non-security control row cannot run."
+		problems += "Every job on this map is security, so the negative control row cannot run."
 
 	if(!length(problems))
 		// ready, security among them, drafted antagonists, voted in, startable
@@ -136,8 +134,8 @@
 		for(var/list/scenario in scenarios)
 			problems += run_startable_scenario(mode, antag, security_titles, scenario[1], scenario[2], scenario[3], scenario[4], scenario[5])
 
-		// The count must be specific to the security set, not to "readied up at
-		// all" - fill the quota with captains and it must still fail.
+		// The count must be specific to security, not to "readied up at all" -
+		// fill the quota with non-security jobs and it must still fail.
 		problems += run_startable_scenario(mode, antag, non_security_titles, 15, 4, 3, FALSE, FALSE)
 
 	qdel(mode)
@@ -148,12 +146,12 @@
 		pass("check_startable() correctly gated on required_players, required_officers and required_enemies across all scenarios.")
 	return 1
 
-/// Resolves job types to their titles on the running map, silently dropping any that do not exist here.
-/datum/unit_test/mercenary_check_startable_requirements/proc/get_job_titles(list/job_types)
+/// Every job title on the running map belonging to none of `department_flags` - the negative control for the counter.
+/datum/unit_test/mercenary_check_startable_requirements/proc/get_titles_outside_departments(department_flags)
 	var/list/titles = list()
-	for(var/job_type in job_types)
-		var/datum/job/job = SSjobs.get_by_path(job_type)
-		if(job)
+	for(var/title in SSjobs.titles_to_datums)
+		var/datum/job/job = SSjobs.titles_to_datums[title]
+		if(job && !(job.department_flag & department_flags))
 			titles |= job.title
 	return titles
 

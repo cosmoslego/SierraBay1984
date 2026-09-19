@@ -26,7 +26,8 @@
       "type": "byond",
       "request": "launch",
       "name": "Run Unit Tests",
-      "preLaunchTask": "dm: build unit tests - baystation12.dme",
+      "preLaunchTask": "dm: build unit tests",
+      "postDebugTask": "dm: show unit test results",
       "dmb": "${workspaceFolder}/baystation12.dmb",
       "dreamDaemon": true
     }
