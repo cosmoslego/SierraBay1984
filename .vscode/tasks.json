@@ -10,6 +10,24 @@
         "isDefault": true
       },
       "label": "dm: build - baystation12.dme"
+    },
+    {
+      "type": "shell",
+      "label": "dm: build unit tests - baystation12.dme",
+      "command": "${input:dmPath}",
+      "args": ["-DUNIT_TEST", "baystation12.dme"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$dreammaker"],
+      "group": "build"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "dmPath",
+      "type": "promptString",
+      "description": "Path to dm.exe / DreamMaker from your local BYOND install (just \"dm\" if it's on your PATH)"
     }
   ]
 }
