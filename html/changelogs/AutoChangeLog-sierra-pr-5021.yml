@@ -1,7 +1,0 @@
-author: Lexanx
-changes:
-  - bugfix: Больше нельзя вселятся в меха
-  - rscadd: Теперь можно стрелять играя за симплмобика дальника
-  - rscadd: Ghost Invasion теперь не флудит в чат, а уходит в окно на кнопку в 
-      панеле Ghosta
-delete-after: true
