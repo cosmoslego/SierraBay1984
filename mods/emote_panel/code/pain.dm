@@ -3,9 +3,15 @@
 /mob/living/proc/agony_scream()
 	if(stat || is_species(SPECIES_MONKEY))
 		return
+
 	if(world.time < next_agony_scream)
 		return
 	next_agony_scream = world.time + 2 SECONDS
+
+	if(is_species(SPECIES_NABBER))
+		emote(pick("chitter", "buzz", "hiss"))
+		return
+
 	var/scream_sound = null
 	var/message = null
 
@@ -26,6 +32,9 @@
 
 /mob/living/proc/agony_moan()
 	if(stat || is_species(SPECIES_MONKEY))
+		return
+	if(is_species(SPECIES_NABBER))
+		emote(pick("chitter", "buzz", "hiss"))
 		return
 	var/moan_sound = null
 	var/message = null
