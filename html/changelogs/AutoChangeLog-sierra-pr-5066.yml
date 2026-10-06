@@ -1,6 +1,0 @@
-author: veeqies
-changes:
-  - balance: '10mm rubber: damage: 15 > 8; agony: 15 > 30'
-  - balance: '7mm rubber: damage: 10 > 5; agony: 10 > 20'
-  - balance: '12g beanbag: agony: 30 > 60'
-delete-after: true
