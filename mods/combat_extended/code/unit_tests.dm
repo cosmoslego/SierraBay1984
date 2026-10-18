@@ -8721,6 +8721,15 @@
 	shield.forceMove(spot(-2, -2))
 	reset_arena()
 
+/**
+ * Поворачивает ещё не летевший снаряд спиной к полёту. Куда он смотрит, когда клетка зовёт его
+ * `Bump()` на первом шаге, решает сборка BYOND: 516.1667 под Windows успевает повернуть его по шагу,
+ * а в CI (516.1658 под Linux) пули в держащего шли мимо живого щита. Снаряд повёрнут так, как будто
+ * BYOND его не повернул.
+ */
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/proc/face_away(obj/item/projectile/projectile)
+	projectile.set_dir(GLOB.reverse_dir[get_dir(projectile, projectile.original)])
+
 /// Выстрелы по держащему `holder`, прикрытому живым щитом `shield`. Броски до и после этой
 /// проверки попадают в грудь наверняка. Щит ранят последним: раненый может упасть.
 /datum/unit_test/combat_extended/pixel_aim/physical_hits/proc/fire_at_living_shield(list/failures, mob/living/carbon/human/holder, mob/living/carbon/human/shield)
@@ -8734,6 +8743,7 @@
 	ce_miss_pass_share = 100
 	var/obj/item/projectile/missed = aim(holder, null, 0, west)
 	missed.ce_point_blank = TRUE
+	face_away(missed)
 	fly_step(missed)
 	if(QDELETED(missed) || missed.loc != place || missed.ce_last_missed != shield || !(holder in missed.permutated))
 		failures += "живой щит: пуля, промахнувшаяся по щиту, мимо держащего не прошла — цела — [!QDELETED(missed)], промах по щиту записан — [missed.ce_last_missed == shield]"
@@ -8755,6 +8765,7 @@
 	shield_damage = shield.getBruteLoss()
 	var/obj/item/projectile/blocked = aim(holder, null, 0, west)
 	blocked.ce_point_blank = TRUE
+	face_away(blocked)
 	fly_step(blocked)
 	if(!QDELETED(blocked) || shield.getBruteLoss() <= shield_damage || holder.getBruteLoss() != holder_damage)
 		failures += "живой щит: пуля в щит — цела — [!QDELETED(blocked)], урон щиту [shield.getBruteLoss() - shield_damage], держащему [holder.getBruteLoss() - holder_damage]"

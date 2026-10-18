@@ -86,10 +86,15 @@
  * Диагональный шаг BYOND делает прыжком, а линия полёта между двумя точками вектора проходит ещё
  * одну клетку — срезает её угол. Сперва снаряд идёт в неё, и стена в ней его останавливает
  * (`/mods/combat_extended/code/projectile_aim.dm`).
+ *
+ * Куда снаряд смотрит, когда клетка зовёт его `Bump()`, решает сборка BYOND: одни успевают повернуть
+ * его по шагу, другие нет. Кор `Bump()` по `dir` решает, прикрыт ли моб живым щитом, поэтому
+ * направление шага снаряд запоминает сам (`ce_face_travel()`).
  */
 /obj/item/projectile/Move(newloc, direct)
 	. = FALSE
 	ce_bump_resolved = FALSE
+	ce_travel_dir = isturf(newloc) ? get_dir(src, newloc) : null
 	if(ce_pass_cut_corner(newloc))
 		// У шага в срезанный угол столкновения свои.
 		ce_bump_resolved = FALSE
