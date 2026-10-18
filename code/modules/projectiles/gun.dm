@@ -166,7 +166,7 @@
 			else
 				item_state_slots[slot_l_hand_str] = initial(item_state)
 				item_state_slots[slot_r_hand_str] = initial(item_state)
-		if(M.skill_check(gun_skill,SKILL_BASIC))
+		if(shows_safety_to(M))
 			AddOverlays(image('icons/obj/guns/gui.dmi',"safety[safety()]"))
 	if(safety_icon)
 		AddOverlays(image(icon,"[safety_icon][safety()]"))
@@ -395,7 +395,10 @@
 					if(8 to INFINITY)
 						to_chat(user, SPAN_WARNING("You struggle to hold \the [src] steady!"))
 
-		if(screen_shake)
+		// [SIERRA-EDIT] - COMBAT_EXTENDED - (Толчок вида на пиксели вместо тряски камеры на клетки: /mods/combat_extended/code/view_kick.dm)
+		// if(screen_shake) // SIERRA-EDIT - ORIGINAL
+		if(screen_shake && !ce_kick_view(user, target))
+		// [/SIERRA-EDIT]
 			spawn()
 				shake_camera(user, screen_shake+1, screen_shake)
 
@@ -726,6 +729,9 @@
 
 	safety_state = !safety_state
 	update_icon()
+	var/mob/holder = loc
+	if(istype(holder))
+		holder.update_mouse_pointer()
 	if(user)
 		user.visible_message(SPAN_WARNING("[user] switches the safety of \the [src] [safety_state ? "on" : "off"]."), SPAN_NOTICE("You switch the safety of \the [src] [safety_state ? "on" : "off"]."), range = 3)
 		last_safety_check = world.time
@@ -764,6 +770,10 @@
 
 /obj/item/gun/proc/safety()
 	return has_safety && safety_state
+
+/// Whether `user` holding this gun sees the safety indicator on it.
+/obj/item/gun/proc/shows_safety_to(mob/user)
+	return user.skill_check(gun_skill, SKILL_BASIC)
 
 /obj/item/gun/equipped()
 	..()

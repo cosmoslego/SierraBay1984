@@ -1,0 +1,830 @@
+[
+{
+"type": "/obj/item/gun/projectile",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": null,
+"falloff": null
+},
+{
+"type": "/obj/item/gun/projectile/automatic",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/flechette",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/assault_rifle",
+"acc": 2.0,
+"bulk": "GUN_BULK_HEAVY_RIFLE",
+"power": 7.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/assault_rifle/heltek",
+"acc": 2.0,
+"bulk": "GUN_BULK_HEAVY_RIFLE",
+"power": 7.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/assault_rifle/mounted",
+"acc": 1.0,
+"bulk": "GUN_BULK_RIFLE",
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/assault_rifle/mounted/minigun",
+"acc": 1.0,
+"bulk": "GUN_BULK_RIFLE",
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/battlerifle",
+"acc": 1.0,
+"bulk": "GUN_BULK_HEAVY_RIFLE",
+"power": 9.0,
+"ohp": 10.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/bullpup_rifle",
+"acc": 2.0,
+"bulk": "GUN_BULK_RIFLE",
+"power": 7.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/bullpup_rifle/light",
+"acc": 2.0,
+"bulk": "GUN_BULK_LIGHT_RIFLE",
+"power": 7.0,
+"ohp": 6.0,
+"proj": "/obj/item/projectile/bullet/rifle/military",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/iso",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/flechette",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/jaguar",
+"acc": -1.5,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/jaguar/unfolded",
+"acc": 1.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 3.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/l6_saw",
+"acc": 0.0,
+"bulk": 10.0,
+"power": 5.0,
+"ohp": 10.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/l6_saw/mag",
+"acc": 0.0,
+"bulk": 10.0,
+"power": 5.0,
+"ohp": 10.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/machine_pistol",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/machine_pistol/usi",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/mbr",
+"acc": 0.0,
+"bulk": "GUN_BULK_RIFLE + 1",
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/merc_smg",
+"acc": 1.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 4.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/minigun",
+"acc": 1.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 20.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/minigun/mounted",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/mounted/shotgun",
+"acc": -1.0,
+"bulk": "GUN_BULK_RIFLE",
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/flechette",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/mounted/smg",
+"acc": 3.0,
+"bulk": "GUN_BULK_RIFLE",
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout/mech",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/mr735",
+"acc": 0.0,
+"bulk": "GUN_BULK_RIFLE",
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/nt41",
+"acc": 0.0,
+"bulk": "GUN_BULK_CARABINE",
+"power": 5.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol/fast",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/nt41/empty",
+"acc": 0.0,
+"bulk": "GUN_BULK_CARABINE",
+"power": 5.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol/fast",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/rocket_launcher",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/rocket",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/rocket_launcher/security",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/rocket",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/sec_smg",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 7.0,
+"ohp": 3.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/sec_smg/c20a",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 7.0,
+"ohp": 3.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/sec_smg/c20a/empty",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 7.0,
+"ohp": 3.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/sec_smg/empty",
+"acc": 0.0,
+"bulk": -1.0,
+"power": 7.0,
+"ohp": 3.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/sol_smg",
+"acc": 1.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 4.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/automatic/sol_smg/empty",
+"acc": 1.0,
+"bulk": -1.0,
+"power": 5.0,
+"ohp": 4.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/changeling",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/chemdart/changeling",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/dartgun",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/chemdart",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/dartgun/vox",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/chemdart",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/dartgun/vox/medical",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/chemdart",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/dartgun/vox/raider",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/chemdart",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/flare",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": null,
+"falloff": null
+},
+{
+"type": "/obj/item/gun/projectile/flare/loaded",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/energy/flash/flare",
+"falloff": 2.5
+},
+{
+"type": "/obj/item/gun/projectile/heavysniper",
+"acc": -2.0,
+"bulk": 8.0,
+"power": 5.0,
+"ohp": 6.0,
+"proj": "/obj/item/projectile/bullet/rifle/shell",
+"falloff": 0.5
+},
+{
+"type": "/obj/item/gun/projectile/heavysniper/ant",
+"acc": -2.0,
+"bulk": 8.0,
+"power": 5.0,
+"ohp": 6.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/heavysniper/boltaction",
+"acc": 4.0,
+"bulk": 8.0,
+"power": 5.0,
+"ohp": 6.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/pirate",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": null,
+"falloff": null
+},
+{
+"type": "/obj/item/gun/projectile/pirate/unloaded",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": null,
+"falloff": null
+},
+{
+"type": "/obj/item/gun/projectile/pistol",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/bobcat",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/broomstick",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 6.0,
+"ohp": 3.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/grosser",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/gyropistol",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/gyro",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/holdout",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/m19",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/m19/empty",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/m22f",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/m22f/empty",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/m22f/icarus",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/magnum_pistol",
+"acc": 2.0,
+"bulk": 3.0,
+"power": 7.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol/strong",
+"falloff": 2.5
+},
+{
+"type": "/obj/item/gun/projectile/pistol/optimus",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/sec",
+"acc": -1.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol/rubber",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/sec/MK",
+"acc": -1.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol/rubber",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/sec/detective",
+"acc": -1.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol/rubber",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/sec/empty",
+"acc": -1.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol/rubber",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/sec/lethal",
+"acc": -1.0,
+"bulk": 0.0,
+"power": 7.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/pistol/throwback",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/revolver",
+"acc": 2.0,
+"bulk": 3.0,
+"power": 8.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol/strong",
+"falloff": 2.5
+},
+{
+"type": "/obj/item/gun/projectile/revolver/capgun",
+"acc": 2.0,
+"bulk": 3.0,
+"power": 8.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol/cap",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/revolver/foundation",
+"acc": 2.0,
+"bulk": 3.0,
+"power": 8.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/nullglass",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/revolver/holdout",
+"acc": 1.0,
+"bulk": 0.0,
+"power": 8.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pistol/holdout",
+"falloff": 4.0
+},
+{
+"type": "/obj/item/gun/projectile/revolver/medium",
+"acc": 1.0,
+"bulk": 0.0,
+"power": 8.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/revolver/medium/captain",
+"acc": 1.0,
+"bulk": 0.0,
+"power": 8.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/revolver/medium/marooned",
+"acc": 1.0,
+"bulk": 0.0,
+"power": 8.0,
+"ohp": 2.0,
+"proj": "/obj/item/projectile/bullet/pistol",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/rocket",
+"acc": 4.0,
+"bulk": "GUN_BULK_HEAVY_RIFLE",
+"power": 8.0,
+"ohp": 20.0,
+"proj": "/obj/item/projectile/bullet/rpg_rocket",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/rocket/aussec",
+"acc": 4.0,
+"bulk": "GUN_BULK_HEAVY_RIFLE",
+"power": 8.0,
+"ohp": 20.0,
+"proj": "/obj/item/projectile/bullet/rpg_rocket",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/rocket/hel",
+"acc": 4.0,
+"bulk": "GUN_BULK_HEAVY_RIFLE",
+"power": 8.0,
+"ohp": 20.0,
+"proj": "/obj/item/projectile/bullet/rpg_rocket",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/cane",
+"acc": -3.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 5.0,
+"proj": "/obj/item/projectile/bullet/pellet/shotgun",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/doublebarrel",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/shotgun/beanbag",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/doublebarrel/flare",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/energy/flash/flare",
+"falloff": 2.5
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/doublebarrel/pellet",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/pellet/shotgun",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/doublebarrel/sawn",
+"acc": 0.0,
+"bulk": 2.0,
+"power": 5.0,
+"ohp": 4.0,
+"proj": "/obj/item/projectile/bullet/pellet/shotgun",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/doublebarrel/sawn/empty",
+"acc": 0.0,
+"bulk": 2.0,
+"power": 5.0,
+"ohp": 4.0,
+"proj": "/obj/item/projectile/bullet/pellet/shotgun",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/magshot",
+"acc": -1.0,
+"bulk": "GUN_BULK_RIFLE",
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/shotgun",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/popout",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/pellet/shotgun",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/pump",
+"acc": 0.0,
+"bulk": 6.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/shotgun/beanbag",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/pump/combat",
+"acc": 0.0,
+"bulk": 6.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/shotgun",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/pump/combat/empty",
+"acc": 0.0,
+"bulk": 6.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/shotgun",
+"falloff": 2.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/pump/empty",
+"acc": 0.0,
+"bulk": 6.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/shotgun/beanbag",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/pump/exploration",
+"acc": 0.0,
+"bulk": 6.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/shotgun/beanbag",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/shotgun/pump/sawn",
+"acc": 0.0,
+"bulk": 4.0,
+"power": 5.0,
+"ohp": 4.0,
+"proj": "/obj/item/projectile/bullet/shotgun/beanbag",
+"falloff": 3.0
+},
+{
+"type": "/obj/item/gun/projectile/sniper/garand",
+"acc": 2.0,
+"bulk": "GUN_BULK_HEAVY_RIFLE",
+"power": 5.0,
+"ohp": 9.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/sniper/panther",
+"acc": 4.0,
+"bulk": "GUN_BULK_RIFLE",
+"power": 8.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/rifle",
+"falloff": 1.0
+},
+{
+"type": "/obj/item/gun/projectile/sniper/semistrip",
+"acc": 1.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 8.0,
+"proj": "/obj/item/projectile/bullet/pistol/strong",
+"falloff": 2.5
+},
+{
+"type": "/obj/item/gun/projectile/taser",
+"acc": 0.0,
+"bulk": 0.0,
+"power": 5.0,
+"ohp": 0.0,
+"proj": "/obj/item/projectile/bullet/electrode",
+"falloff": 2.0
+}
+]

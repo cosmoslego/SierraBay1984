@@ -17,10 +17,14 @@
 							'sound/weapons/guns/ricochet3.ogg', 'sound/weapons/guns/ricochet4.ogg')
 	impact_sounds = list(BULLET_IMPACT_MEAT = SOUNDS_BULLET_MEAT, BULLET_IMPACT_METAL = SOUNDS_BULLET_METAL)
 
-/obj/item/projectile/bullet/on_hit(atom/target, blocked = 0)
-	if (..(target, blocked))
+// [SIERRA-EDIT] - COMBAT_EXTENDED - (Зона попадания доходит до `on_hit()`, иначе боль пули достаётся случайной конечности: /mods/combat_extended/code/agony_armor.dm)
+// /obj/item/projectile/bullet/on_hit(atom/target, blocked = 0) // SIERRA-EDIT - ORIGINAL
+// 	if (..(target, blocked)) // SIERRA-EDIT - ORIGINAL
+/obj/item/projectile/bullet/on_hit(atom/target, blocked = 0, def_zone = null)
+	if (..(target, blocked, def_zone))
 		var/mob/living/L = target
 		shake_camera(L, 3, 2)
+// [/SIERRA-EDIT]
 
 /obj/item/projectile/bullet/attack_mob(mob/living/target_mob, distance, miss_modifier)
 	if(penetrating > 0 && damage > 20 && prob(damage))
@@ -142,13 +146,13 @@
 /obj/item/projectile/bullet/pistol/rubber //"rubber" bullets
 	name = "rubber bullet"
 	damage_flags = 0
-	damage = 15
-	agony = 15
+	damage = 8
+	agony = 30
 	embed = FALSE
 
 /obj/item/projectile/bullet/pistol/rubber/holdout
-	agony = 10
-	damage = 10
+	agony = 20
+	damage = 5
 
 //4mm. Tiny, very low damage, does not embed, but has very high penetration. Only to be used for the experimental SMG.
 /obj/item/projectile/bullet/flechette
@@ -169,7 +173,7 @@
 	name = "beanbag"
 	damage = 20
 	damage_flags = 0
-	agony = 30
+	agony = 60
 	embed = FALSE
 	armor_penetration = 0
 	distance_falloff = 3

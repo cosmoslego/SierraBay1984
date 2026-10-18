@@ -6,6 +6,7 @@
 #include "cardiac_overhaul/_cardiac_overhaul_includes.dm"
 #include "client_verbs/_client_verbs_includes.dm"
 #include "colony_fractions/_colony_types_includes.dm"
+#include "combat_extended/_combat_extended_includes.dm"
 // #include "don_loadout/_don_loadout_includes.dm" // Не открывать до Рождества
 #include "220_cult/_220_cult_includes.dm"
 #include "eris_announcer/_eris_announcer_includes.dm"
@@ -13,6 +14,7 @@
 #include "giant_armored_centipede/_giant_armored_centipede_includes.dm"
 #include "escpodinf/_escpodinf_includes.dm"
 #include "expanded_culture_descriptor/_expanded_culture_descriptor_includes.dm"
+#include "gamemode_job_requirements/_gamemode_job_requirements_includes.dm"
 #include "gliding/_gliding_includes.dm"
 #include "guns/_guns_includes.dm"
 #include "height_system/_heights_includes.dm"
@@ -32,7 +34,6 @@
 #include "hivemind/_hivemind_includes.dm"
 #include "nyc_posters/_nyc_posters_includes.dm"
 #include "pixelshift/_pixelshift_includes.dm"
-#include "ssinput/_ssinput_includes.dm"
 #include "statusbar/_statusbar_includes.dm"
 #include "unathi/_unathi_includes.dm"
 #include "utf8/_utf8_includes.dm"
@@ -87,3 +88,4 @@
 #include "mules/mules_includes.dm"
 #include "medical/medical_includes.dm"
 #include "case_dossier/_case_dossier_includes.dm"
+#include "advanced_landing/_advanced_landing_includes.dm"
