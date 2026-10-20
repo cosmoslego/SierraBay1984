@@ -264,7 +264,10 @@ var/global/const/CLICK_HANDLER_REMOVE_IF_NOT_TOP    = FLAG_02
 /datum/click_handler/default/proc/ResolveClickTarget(atom/object)
 	if (istype(object, /obj/screen/click_catcher))
 		var/obj/screen/click_catcher/catcher = object
+		// [SIERRA-EDIT] - (screen_loc2turf is removed in Sierra, see code/_helpers/turfs.dm)
+		// return screen_loc2turf(catcher.screen_loc, get_turf(user)) // SIERRA-EDIT - ORIGINAL
 		return catcher.get_covered_turf(user)
+		// [/SIERRA-EDIT]
 	return object
 
 /datum/click_handler/default/OnMouseUp(atom/object, location, control, params)
