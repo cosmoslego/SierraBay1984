@@ -1,0 +1,11 @@
+author: Aigamuxa
+changes:
+  - tweak: Guns now fire the moment you press the left mouse button at a target 
+      out of reach, instead of when you release it.
+  - rscadd: Holding a gun with the safety off turns your cursor into a 
+      crosshair. The "Gun crosshair" preference turns this off.
+  - rscadd: If your weapons skill is too low to see a gun's safety indicator, 
+      the crosshair also shows with the safety on.
+  - bugfix: Automatic fire no longer stops when you hold the cursor over an area
+      you can't see.
+delete-after: true
