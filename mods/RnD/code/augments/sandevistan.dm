@@ -244,15 +244,14 @@
 
 /// Seconds left on the current countdown, or 0 if nothing counts down.
 /obj/item/organ/internal/augment/active/sandevistan/proc/get_seconds_left(status)
-	var/time_left = 0
 	switch(status)
 		if(SANDEVISTAN_ACTIVE)
 			var/mob/living/carbon/human/H = owner
 			if(istype(H))
-				time_left = activate_time + get_sandevistan_duration(H) - world.time
+				return get_countdown_seconds(activate_time + get_sandevistan_duration(H))
 		if(SANDEVISTAN_COOLDOWN, SANDEVISTAN_EMP_LOCKOUT)
-			time_left = cooldown_until - world.time
-	return max(0, ceil(time_left / (1 SECOND)))
+			return get_countdown_seconds(cooldown_until)
+	return 0
 
 /obj/item/organ/internal/augment/active/sandevistan/proc/get_status_text()
 	var/status = get_status()
@@ -304,41 +303,23 @@
 	if(status == SANDEVISTAN_ACTIVE || status == SANDEVISTAN_COOLDOWN || status == SANDEVISTAN_EMP_LOCKOUT)
 		schedule_display_tick()
 
+/// The tooltip carries the status text too
 /obj/item/organ/internal/augment/active/sandevistan/refresh_action_button()
 	. = ..()
-	if(!. || !action.button)
-		return
-	action.button.SetName(action.UpdateName())
-	var/image/label = get_button_label(get_status())
-	if(label)
-		action.button.AddOverlays(label)
+	if(. && action.button)
+		action.button.SetName(action.UpdateName())
 
-/obj/item/organ/internal/augment/active/sandevistan/proc/get_button_label(status)
-	var/text
-	var/text_color
+/obj/item/organ/internal/augment/active/sandevistan/get_action_button_label()
+	var/status = get_status()
 	switch(status)
 		if(SANDEVISTAN_ACTIVE)
-			text = "[get_seconds_left(status)]"
-			text_color = "#00ffff"
+			return create_action_button_label("[get_seconds_left(status)]", COLOR_CYAN)
 		if(SANDEVISTAN_COOLDOWN)
-			text = "[get_seconds_left(status)]"
-			text_color = COLOR_WHITE
+			return create_action_button_label("[get_seconds_left(status)]", COLOR_WHITE)
 		if(SANDEVISTAN_EMP_LOCKOUT)
-			text = "EMP<br>[get_seconds_left(status)]"
-			text_color = "#ffd04f"
+			return create_action_button_label("EMP<br>[get_seconds_left(status)]", COLOR_ORANGE_LIGHT)
 		if(SANDEVISTAN_OFFLINE)
-			text = "OFF"
-			text_color = "#ff3030"
-	if(!text)
-		return
-	var/image/label = new()
-	// Stays readable over the red tint of an unavailable button
-	label.appearance_flags = RESET_COLOR | RESET_ALPHA
-	label.maptext_width = 32
-	label.maptext_height = 20
-	label.maptext_y = 1
-	label.maptext = STYLE_SMALLFONTS_OUTLINE("<center>[text]</center>", 7, text_color, COLOR_BLACK)
-	return label
+			return create_action_button_label("OFF", COLOR_RED_LIGHT)
 
 /datum/action/item_action/organ/augment/sandevistan
 	button_icon = 'mods/RnD/icons/augment.dmi'
