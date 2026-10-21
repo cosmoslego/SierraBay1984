@@ -17,11 +17,8 @@
 							'sound/weapons/guns/ricochet3.ogg', 'sound/weapons/guns/ricochet4.ogg')
 	impact_sounds = list(BULLET_IMPACT_MEAT = SOUNDS_BULLET_MEAT, BULLET_IMPACT_METAL = SOUNDS_BULLET_METAL)
 
-// [SIERRA-EDIT] - COMBAT_EXTENDED - (Зона попадания доходит до `on_hit()`, иначе боль пули достаётся случайной конечности: /mods/combat_extended/code/agony_armor.dm)
-// /obj/item/projectile/bullet/on_hit(atom/target, blocked = 0) // SIERRA-EDIT - ORIGINAL
-// 	if (..(target, blocked)) // SIERRA-EDIT - ORIGINAL
 /obj/item/projectile/bullet/on_hit(atom/target, blocked = 0, def_zone = null)
-	if (..(target, blocked, def_zone))
+	if (..())
 		var/mob/living/L = target
 		shake_camera(L, 3, 2)
 // [/SIERRA-EDIT]
