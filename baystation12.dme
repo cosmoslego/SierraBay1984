@@ -3534,6 +3534,7 @@
 #include "mods\_modpack.dm"
 #include "mods\global_modpacks.dm"
 #include "mods\_master_files\code\_onclick\click.dm"
+#include "mods\_master_files\code\_onclick\hud\action.dm"
 #include "mods\_master_files\code\controllers\subsystems\lighting.dm"
 #include "mods\_master_files\code\game\world.dm"
 #include "mods\_master_files\code\game\antagonist\antagonist_panel.dm"
