@@ -3,6 +3,7 @@
 
 #include "_pencode_images.dm"
 
+#include "code/image_hosts.dm"
 #include "code/pencode_images.dm"
 #include "code/paper.dm"
 #include "code/logging.dm"

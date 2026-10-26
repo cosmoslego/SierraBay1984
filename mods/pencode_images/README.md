@@ -23,7 +23,7 @@ ID мода: PENCODE_IMAGES
 и компьютеры переводят pencode в HTML через `pencode2html()`.
 
 Ссылка проходит проверку: только `https://`, хост целиком совпадает с одним из списка
-`GLOB.pencode_image_hosts`, а в пути и параметрах разрешены только буквы, цифры и `_ . / % ~ + - = & ;`.
+в конфиге `config/image_hosts.txt`, а в пути и параметрах разрешены только буквы, цифры и `_ . / % ~ + - = & ;`.
 Кавычки, пробелы, `<`, `>`, `@`, `:` и `#` не проходят, поэтому ссылка не может выйти из атрибута `src`.
 Ссылка, которая не прошла проверку, остаётся на странице обычным текстом.
 
@@ -31,6 +31,12 @@ ID мода: PENCODE_IMAGES
 и хостинг видит его IP. Со своего сервера игрок мог бы собрать IP всех, кто открыл его письмо или бумагу.
 В список добавляем только крупные хостинги, которые не показывают загрузившему, кто смотрел файл,
 без открытых редиректов и без поддоменов, которые могут создавать пользователи.
+
+#### Конфиг
+
+Список хостов лежит в `config/image_hosts.txt`, по одному хосту на строку, строки с `#` - комментарии.
+Образец с правилами - `config/example/image_hosts.txt`.
+Если файла нет - разрешённых хостов тоже нет, в лог пишется предупреждение.
 
 Ограничения:
 
@@ -56,9 +62,9 @@ ID мода: PENCODE_IMAGES
 
 ### Изменения *кор кода*
 
-- `code/_helpers/text.dm`: `/proc/pencode2html` — в конце вызывает `pencode_images_to_html()`.
-- `code/_helpers/text.dm`: `/proc/html2pencode` — перед `strip_html_properly()` вызывает `pencode_images_to_pencode()`.
-- `code/modules/admin/admin_investigate.dm`: `/client/proc/investigate_show` — страница `images`.
+- `code/_helpers/text.dm`: `/proc/pencode2html` - в конце вызывает `pencode_images_to_html()`.
+- `code/_helpers/text.dm`: `/proc/html2pencode` - перед `strip_html_properly()` вызывает `pencode_images_to_pencode()`.
+- `code/modules/admin/admin_investigate.dm`: `/client/proc/investigate_show` - страница `images`.
 <!--
   Если вы редактировали какие-либо процедуры или переменные в кор коде,
   они должны быть указаны здесь.
@@ -69,15 +75,16 @@ ID мода: PENCODE_IMAGES
 
 ### Оверрайды
 
-- `mods/pencode_images/code/paper.dm`: `/obj/item/paper/update_space` — картинка занимает место на бумаге по длине ссылки.
-- `mods/pencode_images/code/pencode_images.dm`: `/datum/codex_entry/pen/New` — строка про `[img]` в кодексе ручки.
-- `mods/pencode_images/code/logging.dm` — логи картинок:
-  - `/obj/item/paper/parsepencode` — запись и печать на бумаге;
-  - `/datum/computer_file/data/email_account/send_mail` — письма;
-  - `/datum/computer_file/program/wordprocessor/save_file`, `create_file` — файлы NanoWord;
-  - `/datum/report_field/pencode_text/set_value` — текстовые поля отчётов;
-  - `/datum/admins/Topic` — кнопка `VIEW` и закрытие окна;
-  - `/datum/client_preference/staff/show_image_logs` — новая настройка стаффа.
+- `mods/pencode_images/code/paper.dm`: `/obj/item/paper/update_space` - картинка занимает место на бумаге по длине ссылки.
+- `mods/pencode_images/code/pencode_images.dm`: `/datum/codex_entry/pen/New` - строка про `[img]` в кодексе ручки.
+- `mods/pencode_images/code/logging.dm` - логи картинок:
+  - `/obj/item/paper/parsepencode` - запись и печать на бумаге;
+  - `/datum/computer_file/data/email_account/send_mail` - письма;
+  - `/datum/computer_file/program/wordprocessor/save_file`, `create_file` - файлы NanoWord;
+  - `/datum/report_field/pencode_text/set_value` - текстовые поля отчётов;
+  - `/datum/admins/Topic` - кнопка `VIEW` и закрытие окна;
+  - `/datum/client_preference/staff/show_image_logs` - новая настройка стаффа.
+- `mods/pencode_images/code/image_hosts.dm`: `/datum/configuration/New`, `var/pencode_image_hosts` - список хостов из конфига.
 <!--
   Если ты добавлял новый модульный оверрайд, его нужно указать здесь.
   Здесь указываются оверрайды в твоём моде и папке `_master_files`
@@ -88,6 +95,7 @@ ID мода: PENCODE_IMAGES
 ### Дефайны
 
 - `mods/pencode_images/code/pencode_images.dm`: `PENCODE_IMAGES_PER_TEXT`, `PENCODE_IMAGE_MAX_HEIGHT_PX`, `PENCODE_IMAGE_HTML_PATTERN`
+- `mods/pencode_images/code/image_hosts.dm`: `PENCODE_IMAGE_HOSTS_FILE`
 - `mods/pencode_images/code/logging.dm`: `PENCODE_IMAGE_EXCERPT_CHARS`, `PENCODE_IMAGE_PREVIEW_WINDOW`
 <!--
   Если требовалось добавить какие-либо дефайны, укажи файлы,
@@ -99,7 +107,8 @@ ID мода: PENCODE_IMAGES
 
 ### Используемые файлы, не содержащиеся в модпаке
 
-Отсутствуют
+- `config/image_hosts.txt` - список хостов
+- `config/example/image_hosts.txt` - образец конфига хостов
 <!--
   Будь то немодульный файл или модульный файл, который не содержится в папке,
   принадлежащей этому конкретному моду, он должен быть упомянут здесь.

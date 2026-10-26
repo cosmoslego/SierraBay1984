@@ -3,21 +3,6 @@
 /// Matches an <img> tag made by pencode_image_link_to_html(); group 1 is the link.
 #define PENCODE_IMAGE_HTML_PATTERN @"<img class='pencode_image' src='([^']*)'[^>]*>"
 
-/// Hosts that [img] links may point to.
-/// Every reader's client downloads the image straight from the host, so the host sees the reader's IP.
-/// Only add large image hosts that don't show uploaders who viewed a file, with no open redirects
-/// and no subdomains that users can create.
-GLOBAL_LIST_AS(pencode_image_hosts, list(
-	"i.imgur.com" = TRUE,
-	"cdn.discordapp.com" = TRUE,
-	"media.discordapp.net" = TRUE,
-	"i.ibb.co" = TRUE,
-	"i.postimg.cc" = TRUE,
-	"files.catbox.moe" = TRUE,
-	"cdn.imgchest.com" = TRUE,
-	"raw.githubusercontent.com" = TRUE,
-))
-
 /// Turns [img]link[/img] into an <img> tag, up to PENCODE_IMAGES_PER_TEXT per call.
 /// A link to any other host, or one with unexpected characters, stays as plain text.
 /proc/pencode_images_to_html(pencode)
@@ -40,13 +25,13 @@ GLOBAL_LIST_AS(pencode_image_hosts, list(
 	parts += copytext(pencode, position)
 	return jointext(parts, null)
 
-/// Returns the <img> tag for an https link to an allowed host, or null for any other link.
+/// Returns the <img> tag for an https link to a host from config/image_hosts.txt, or null for any other link.
 /// The character set leaves out quotes, spaces, < > @ : and #, so the link can't leave the src attribute.
 /proc/pencode_image_link_to_html(image_link)
 	var/static/regex/safe_link = regex(@"^https://([a-z0-9.-]+)/[\w./%~+-]+(\?[\w./%~+=&;-]*)?$", "i")
 	if(!safe_link.Find(image_link))
 		return null
-	if(!GLOB.pencode_image_hosts[lowertext(safe_link.group[1])])
+	if(!config.pencode_image_hosts[lowertext(safe_link.group[1])])
 		return null
 	return "<img class='pencode_image' src='[image_link]' referrerpolicy='no-referrer' style='max-width: 100%; max-height: [PENCODE_IMAGE_MAX_HEIGHT_PX]px'>"
 
@@ -79,7 +64,10 @@ GLOBAL_LIST_AS(pencode_image_hosts, list(
 	. = ..()
 	mechanics_text += "<b>Images (paper and digital):</b><br>"
 	mechanics_text += "\[img\]link\[/img\] : Inserts an image from a direct https link. Paper takes up to [PENCODE_IMAGES_PER_TEXT] images per write, and a digital file shows up to [PENCODE_IMAGES_PER_TEXT]. "
-	mechanics_text += "Only links to these hosts work: [jointext(GLOB.pencode_image_hosts, ", ")].<br><br>"
+	if(length(config.pencode_image_hosts))
+		mechanics_text += "Only links to these hosts work: [jointext(config.pencode_image_hosts, ", ")].<br><br>"
+	else
+		mechanics_text += "This server allows no image hosts, so the tag stays plain text.<br><br>"
 
 #undef PENCODE_IMAGES_PER_TEXT
 #undef PENCODE_IMAGE_MAX_HEIGHT_PX
