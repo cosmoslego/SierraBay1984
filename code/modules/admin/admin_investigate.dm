@@ -27,12 +27,12 @@
 
 //ADMINVERBS
 // [SIERRA-EDIT] - HALLUCINATION_OVERHAUL - (Added hallucination investigation log category)
-/client/proc/investigate_show( subject in list("hrefs","notes","singulo","telesci","hallucinations") )
+/client/proc/investigate_show( subject in list("hrefs","notes","singulo","telesci","hallucinations","images") ) // [SIERRA-EDIT] - PENCODE_IMAGES - added "images"
 	set name = "Investigate"
 	set category = "Admin"
 	if(!holder)	return
 	switch(subject)
-		if("singulo", "telesci", "hallucinations")			//general one-round-only stuff
+		if("singulo", "telesci", "hallucinations", "images")			//general one-round-only stuff // [SIERRA-EDIT] - PENCODE_IMAGES - added "images"
 			var/F = investigate_subject2file(subject)
 			if(!F)
 				to_chat(src, SPAN_WARNING("Error: admin_investigate: [INVESTIGATE_DIR][subject] is an invalid path or cannot be accessed."))
