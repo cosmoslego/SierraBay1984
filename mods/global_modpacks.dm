@@ -1,5 +1,6 @@
 // SIERRA TODO: GET RID OF IT!!!
 #include "ai/_ai_includes.dm"
+#include "jps_pathfinding/_jps_pathfinding_includes.dm"
 #include "adherent_discharge/_adherent_discharge_includes.dm"
 #include "body_markings/_body_markings_includes.dm"
 #include "cargo/_cargo_includes.dm"
@@ -89,3 +90,4 @@
 #include "medical/medical_includes.dm"
 #include "case_dossier/_case_dossier_includes.dm"
 #include "advanced_landing/_advanced_landing_includes.dm"
+#include "pencode_images/_pencode_images_includes.dm"

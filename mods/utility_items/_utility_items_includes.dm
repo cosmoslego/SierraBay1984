@@ -68,5 +68,6 @@
 #include "code/coat_rack/removing.dm"
 #include "code/trash_casings_scatter.dm"
 #include "code/tactical_gear.dm"
+#include "code/paper_space.dm"
 #include "code/unit_tests.dm"
 #endif
