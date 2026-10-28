@@ -57,16 +57,25 @@
 
 
 /**
- * Снаряд, которому принадлежит этот боевой проход по слоям, или null. `modify_damage_by_armor()`
- * оружия не получает, так что снаряду принадлежит первый проход с его уроном и типом урона.
- * Снаряд отдаётся один раз: остаточный удар и урон из самого `on_hit()` — облучение, взрыв — его
- * итог уже не перепишут.
+ * Снаряд, которому принадлежит этот проход по слоям, или null. `modify_damage_by_armor()` оружия
+ * не получает, так что снаряду принадлежит проход с его уроном и типом урона. Чистый запрос: снаряд
+ * остаётся на мобе — по нему проход берёт собственное тупое пробитие снаряда.
  */
-/mob/living/proc/ce_take_hit_projectile(damage, damage_type)
+/mob/living/proc/ce_get_hit_projectile(damage, damage_type)
 	var/obj/item/projectile/projectile = ce_hit_projectile
 	if(!projectile || damage != projectile.damage || damage_type != projectile.damage_type)
 		return null
-	ce_hit_projectile = null
+	return projectile
+
+
+/**
+ * То же, но снаряд забирается: его получает первый боевой проход. Остаточный удар и урон из самого
+ * `on_hit()` — облучение, взрыв — его итог уже не перепишут.
+ */
+/mob/living/proc/ce_take_hit_projectile(damage, damage_type)
+	var/obj/item/projectile/projectile = ce_get_hit_projectile(damage, damage_type)
+	if(projectile)
+		ce_hit_projectile = null
 	return projectile
 
 

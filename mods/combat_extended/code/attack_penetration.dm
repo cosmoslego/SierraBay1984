@@ -113,3 +113,34 @@
 		return blunt_pen * min(ce_ap_multiplier(armor_pen, CE_AP_DIVISOR_BULLET_BLUNT), CE_AP_MAX_MULT_BULLET_BLUNT)
 
 	return ce_evaluate_curve(ce_pen_curve_blunt, damage) * CE_BLUNT_PEN_MELEE_MULT * ce_ap_multiplier(armor_pen, CE_AP_DIVISOR_MELEE)
+
+
+/obj/item/projectile
+	/// Собственное тупое пробитие снаряда на полном уроне, Bay МПа. null — выводится из урона и AP
+	/// (`ce_derive_blunt_penetration()`). Задаётся патронам, у которых вывод далёк от импульса пули:
+	/// урон Bay с её весом почти не связан (`code/items/guns/bullets.dm`).
+	var/ce_blunt_penetration
+
+
+/**
+ * Тупое пробитие атаки, Bay МПа: собственное у снаряда, чьё это попадание, иначе выведенное из
+ * урона. Снаряд узнаётся по `ce_hit_projectile` (`projectile_effects.dm`), так что консультационный
+ * и боевой проходы одного попадания получают одно число.
+ */
+/mob/living/proc/ce_get_attack_blunt_penetration(damage, damage_type, damage_flags, armor_pen)
+	var/obj/item/projectile/projectile = ce_get_hit_projectile(damage, damage_type)
+	if(projectile && !isnull(projectile.ce_blunt_penetration))
+		return projectile.ce_get_own_blunt_penetration()
+	return ce_derive_blunt_penetration(damage, damage_flags, armor_pen)
+
+
+/**
+ * Собственное тупое пробитие снаряда на его текущем уроне, Bay МПа. Убывает вместе с уроном, как и
+ * выведенное: пуля на излёте (`damage_falloff`) и прошедшая моба навылет несёт меньший импульс.
+ */
+/obj/item/projectile/proc/ce_get_own_blunt_penetration()
+	ASSERT(!isnull(ce_blunt_penetration))
+	var/full_damage = initial(damage)
+	if(full_damage <= 0)
+		return 0
+	return ce_blunt_penetration * damage / full_damage

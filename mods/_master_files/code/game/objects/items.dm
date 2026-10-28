@@ -33,3 +33,24 @@
 	var/line = ce_get_parry_examine_line()
 	if(line)
 		to_chat(user, line)
+
+
+/*
+	COMBAT_EXTENDED — стойка прицела (`mods/combat_extended/code/scopes.dm`): пока держащий смотрит в
+	прицел или бинокль, он не поворачивается и идёт медленно, а свой шаг прицел не снимает. Кор
+	`zoom()` проверяет, можно ли смотреть, и ставит вид; стойка начинается, только если он удался.
+
+	Размер вида прицел не меняет: кор `zoom()` получает тот, что у клиента уже стоит. Смена
+	`client.view` клиент перерисовывает долго — 0.65 с на пустой карте разработчика, и столько же,
+	когда прицел снимают. Далеко прицел видит не из-за размера, а из-за сдвига вида (`pixel_x`,
+	`pixel_y`): клетки за сдвигом BYOND присылает и с прежним размером.
+*/
+/obj/item/zoom(mob/user, tileoffset = 14, viewsize = 9)
+	. = ..(user, tileoffset, user?.client ? user.client.view : viewsize)
+	if(zoom && isliving(user) && !ce_scope_holder)
+		ce_start_scope_stance(user)
+
+/obj/item/unzoom(mob/user)
+	. = ..()
+	if(!zoom && ce_scope_holder)
+		ce_end_scope_stance()

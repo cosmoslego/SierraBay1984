@@ -36,9 +36,12 @@
 	COMBAT_EXTENDED — снаряд, которому оружие посчитало точность, помечается выстрелом из оружия:
 	в броске попадания он гасит `ce_gun_accuracy_points` шанса провала
 	(`mods/combat_extended/code/projectile_hits.dm`). И запоминает дугу разброса от отдачи, которая
-	накопилась у стрелка к этому выстрелу (`mods/combat_extended/code/recoil_spread.dm`).
+	накопилась у стрелка к этому выстрелу (`mods/combat_extended/code/recoil_spread.dm`). До кор
+	версии оружие в прицеле берёт точность прицела, только если стрелок постоял на месте
+	(`mods/combat_extended/code/scopes.dm`).
 */
 /obj/item/gun/process_accuracy(obj/projectile, mob/living/user, atom/target, burst, held_twohanded)
+	ce_settle_scope_accuracy(user)
 	. = ..()
 	var/obj/item/projectile/shot = projectile
 	if(istype(shot))
@@ -72,3 +75,20 @@
 	var/mob/living/carbon/holder = loc
 	if(istype(holder))
 		holder.update_mouse_pointer()
+
+
+/*
+	COMBAT_EXTENDED — кнопка прицела (`mods/combat_extended/code/scopes.dm`): оружию с прицелом её
+	даёт `Initialize()`, а нажатие смотрит в прицел, как глагол `Use Scope`. Без прицела кнопка
+	оружия работает как в кор коде.
+*/
+/obj/item/gun/Initialize()
+	. = ..()
+	if(. == INITIALIZE_HINT_QDEL)
+		return
+	ce_add_scope_action()
+
+/obj/item/gun/ui_action_click(mob/living/user)
+	if(!ce_has_scope_action())
+		return ..()
+	toggle_scope(user, scope_zoom)

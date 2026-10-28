@@ -17,9 +17,6 @@
 		energy = ARMOR_ENERGY_RESISTANT,
 		bomb = ARMOR_BOMB_PADDED
 	)
-	// Место под аксессуар — только у riot и пластасталевого щита. Остальные подтипы riot его снимают:
-	// юнит-тест «Щиты» проверяет, что больше ни у кого его нет.
-	ce_accessory_slot = TRUE
 	// Поднятый щит закрывает тело — видно, что носитель укрылся.
 	ce_cover_sprite_moves = TRUE
 	// Спрайт в правой руке лицом на запад нарисован задом наперёд: щит за спиной, а не перед собой, и
@@ -35,14 +32,12 @@
 		energy = ARMOR_ENERGY_STRONG,
 		bomb = ARMOR_BOMB_RESISTANT
 	)
-	// Большой щит, как riot: место под аксессуар. Задано явно, а не наследуется.
-	ce_accessory_slot = TRUE
 
 /obj/item/shield/buckler
-	// «Not very good at stopping projectiles»: `max_block = 15`, дерево со сталью.
+	// «Not very good at stopping projectiles»: `max_block = 15`, дерево со сталью. Пулю деревянный
+	// щит не держит, оси `bullet` нет.
 	armor = list(
 		melee = ARMOR_MELEE_MAJOR,
-		bullet = ARMOR_BALLISTIC_MINOR,
 		laser = ARMOR_LASER_MINOR,
 		energy = ARMOR_ENERGY_MINOR
 	)
@@ -67,8 +62,6 @@
 	ce_armor_nonphysical = TRUE
 
 /obj/item/shield/riot/changeling
-	// Растёт из руки: вешать аксессуар некуда.
-	ce_accessory_slot = FALSE
 	// Хитин не поднимается вслед за стойкой, а его спрайт в правой руке нарисован верно.
 	ce_cover_sprite_moves = FALSE
 	ce_flip_right_west_sprite = FALSE

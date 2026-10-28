@@ -3840,6 +3840,128 @@
 
 
 /*
+	Собственный удар снаряда (`ce_blunt_penetration`, `attack_penetration.dm`). Снаряд доходит до
+	прохода по слоям через `ce_hit_projectile`, как из `bullet_act()`, а ожидание — урон после той же
+	пластины от процедуры одного слоя с этим ударом. Числа патронов живут в README; здесь — что удар
+	берётся у своего снаряда и только у него, убывает с уроном, печатается в кодексе и что штатный
+	7mmR отличается от 5mmR только ударом.
+*/
+/// Насколько урон и пробитие могут разойтись с ожиданием: только погрешность чисел.
+#define CE_OWN_BLUNT_TOLERANCE 0.001
+
+/datum/unit_test/combat_extended/projectile_blunt
+	name = "CE: Собственный удар снаряда"
+
+/datum/unit_test/combat_extended/projectile_blunt/start_test()
+	var/list/failures = list()
+	check_walk(failures)
+	check_falloff(failures)
+	check_codex(failures)
+	check_rifle_rounds(failures)
+	cleanup()
+	if(length(failures))
+		fail(jointext(failures, "\n"))
+	else
+		pass("Проход берёт собственный удар у своего снаряда и только у него; удар убывает с уроном и виден в кодексе; штатный 7mmR отличается от 5mmR только ударом.")
+	return 1
+
+/// Остановленная medium-вставкой дробина: со своим снарядом — собственный удар, без него и с чужим уроном — выведенный.
+/datum/unit_test/combat_extended/projectile_blunt/proc/check_walk(list/failures)
+	var/mob/living/carbon/human/H = make_human(list(/obj/item/clothing/accessory/armor_plate/medium))
+	var/datum/extension/armor/plate = plate_armor(H)
+	if(!plate)
+		failures += "проход: не удалось одеть цель"
+		return
+	var/obj/item/projectile/pellet = new /obj/item/projectile/bullet/pellet/shotgun(H.loc)
+	spawned += pellet
+	var/damage = pellet.damage
+	var/flags = pellet.damage_flags()
+	var/armor_pen = pellet.armor_penetration
+	var/own = pellet.ce_blunt_penetration
+	var/derived = ce_derive_blunt_penetration(damage, flags, armor_pen)
+	if(isnull(own) || abs(own - derived) <= CE_OWN_BLUNT_TOLERANCE)
+		failures += "проход: у картечи нет своего удара — [own], выведенный [derived]"
+		return
+	if(ce_derive_penetration(damage, flags, armor_pen) >= plate.get_armor_sharp(flags))
+		failures += "проход: дробина пробивает medium-вставку, и удар остановленной не проверить"
+		return
+
+	H.ce_hit_projectile = pellet
+	var/with_projectile = walk_damage(H, damage, pellet.damage_type, flags, armor_pen)
+	var/foreign = walk_damage(H, damage + 1, pellet.damage_type, flags, armor_pen)
+	var/kept_projectile = H.ce_hit_projectile == pellet
+	H.ce_hit_projectile = null
+	var/without_projectile = walk_damage(H, damage, pellet.damage_type, flags, armor_pen)
+
+	var/expected_own = layer_damage(plate, damage, flags, armor_pen, own)
+	var/expected_derived = layer_damage(plate, damage, flags, armor_pen, derived)
+	var/expected_foreign = layer_damage(plate, damage + 1, flags, armor_pen, ce_derive_blunt_penetration(damage + 1, flags, armor_pen))
+	if(abs(with_projectile - expected_own) > CE_OWN_BLUNT_TOLERANCE)
+		failures += "проход со снарядом: [with_projectile], ожидалось [expected_own] — собственный удар не взят"
+	if(abs(without_projectile - expected_derived) > CE_OWN_BLUNT_TOLERANCE)
+		failures += "проход без снаряда: [without_projectile], ожидалось [expected_derived] — удар не выведен"
+	if(abs(foreign - expected_foreign) > CE_OWN_BLUNT_TOLERANCE)
+		failures += "проход с чужим уроном: [foreign], ожидалось [expected_foreign] — взят удар чужого снаряда"
+	if(!kept_projectile)
+		failures += "проход: консультационный проход забрал ссылку на снаряд"
+
+/// Урон, прошедший все слои груди, консультационным проходом.
+/datum/unit_test/combat_extended/projectile_blunt/proc/walk_damage(mob/living/carbon/human/H, damage, damage_type, damage_flags, armor_pen)
+	var/list/result = H.ce_walk_armor_layers(BP_CHEST, damage, damage_type, damage_flags, armor_pen)
+	return result[1]
+
+/// Урон после одного слоя `armor` от атаки целиком до него с тупым пробитием `blunt_pen`.
+/datum/unit_test/combat_extended/projectile_blunt/proc/layer_damage(datum/extension/armor/armor, damage, damage_flags, armor_pen, blunt_pen)
+	var/pen = ce_derive_penetration(damage, damage_flags, armor_pen)
+	var/list/step = armor.ce_try_penetrate(damage, damage_flags, pen, damage, pen, blunt_pen)
+	return step[1]
+
+/// Собственный удар убывает вместе с уроном снаряда: на излёте и после моба, пробитого навылет.
+/datum/unit_test/combat_extended/projectile_blunt/proc/check_falloff(list/failures)
+	var/obj/item/projectile/bullet = new /obj/item/projectile/bullet/rifle/military_standard
+	spawned += bullet
+	var/full = bullet.ce_get_own_blunt_penetration()
+	bullet.damage = initial(bullet.damage) / 2
+	var/half = bullet.ce_get_own_blunt_penetration()
+	if(abs(full - bullet.ce_blunt_penetration) > CE_OWN_BLUNT_TOLERANCE)
+		failures += "излёт: на полном уроне удар [full], а собственный — [bullet.ce_blunt_penetration]"
+	if(abs(half - full / 2) > CE_OWN_BLUNT_TOLERANCE)
+		failures += "излёт: на половине урона удар [half], ожидалось [full / 2]"
+
+/// Кодекс патрона печатает собственный удар, а не выведенный.
+/datum/unit_test/combat_extended/projectile_blunt/proc/check_codex(list/failures)
+	var/obj/item/projectile/pellet = /obj/item/projectile/bullet/pellet/shotgun
+	var/expected = "[round(initial(pellet.ce_blunt_penetration) / CE_BLUNT_DISPLAY_DIVISOR, 0.1)] MPa impact"
+	var/line = ce_projectile_codex_line(pellet)
+	if(!findtext(line, expected))
+		failures += "кодекс картечи: нет «[expected]» в «[line]»"
+
+/// Штатный 7mmR — пуля 5mmR со своим ударом; учебные и флешетта бьют выведенным.
+/datum/unit_test/combat_extended/projectile_blunt/proc/check_rifle_rounds(list/failures)
+	var/obj/item/ammo_casing/casing = /obj/item/ammo_casing/rifle/military
+	var/standard_type = initial(casing.projectile_type)
+	var/rifle_type = /obj/item/projectile/bullet/rifle
+	if(standard_type == rifle_type)
+		failures += "7mmR: штатная гильза стреляет пулей 5mmR"
+		return
+	var/obj/item/projectile/standard = new standard_type
+	var/obj/item/projectile/rifle = new rifle_type
+	spawned += standard
+	spawned += rifle
+	for(var/var_name in list("damage", "armor_penetration", "damage_flags", "damage_type", "penetrating", "distance_falloff", "ce_ricochets_max"))
+		if(standard.vars[var_name] != rifle.vars[var_name])
+			failures += "7mmR: [var_name] штатной пули [standard.vars[var_name]], у 5mmR — [rifle.vars[var_name]]"
+	var/rifle_impact = ce_derive_blunt_penetration(rifle.damage, rifle.damage_flags(), rifle.armor_penetration)
+	if(isnull(standard.ce_blunt_penetration) || standard.ce_blunt_penetration <= rifle_impact)
+		failures += "7mmR: удар штатной пули [standard.ce_blunt_penetration] не тяжелее 5mmR ([rifle_impact])"
+	for(var/obj/item/projectile/path as anything in list(/obj/item/projectile/bullet/rifle/military/practice, /obj/item/projectile/bullet/pellet/shotgun/flechette))
+		if(!isnull(initial(path.ce_blunt_penetration)))
+			failures += "[path]: унаследовал собственный удар [initial(path.ce_blunt_penetration)]"
+
+#undef CE_OWN_BLUNT_TOLERANCE
+
+
+/*
 	Боль и оглушение против брони (`agony_armor.dm`). Снаряды летят настоящим `bullet_act()`, а
 	дубинка бьёт настоящим `apply_hit_effect()`: так проверяется вся цепочка — запись доли урона
 	проходом по слоям, правки кор кода в `on_hit()`, обёртка `bullet_act()` и оверрайд дубинки.
@@ -4202,15 +4324,6 @@
 */
 #define CE_SHIELD_TOLERANCE 0.01
 
-/// Аксессуар щита для теста: считает нажатия кнопки действия.
-/obj/item/ce_shield_accessory/unit_test
-	name = "test shield accessory"
-	action_name = "Test Accessory"
-	var/activations = 0
-
-/obj/item/ce_shield_accessory/unit_test/activate(mob/living/user, obj/item/shield/shield)
-	activations++
-
 
 /datum/unit_test/combat_extended/shields
 	name = "CE: Щиты"
@@ -4229,8 +4342,6 @@
 	check_melee(failures)
 	check_firing(failures)
 	check_stance_toggle(failures)
-	check_accessory(failures)
-	check_projector(failures)
 	check_sprite(failures)
 	check_switch(failures)
 	ce_shields_enabled = old_enabled
@@ -4621,156 +4732,6 @@
 	buckler.attack_self(B)
 	if(buckler.ce_stance != CE_SHIELD_STANCE_AIM)
 		failures += "стойка баклера: использование в руке переключает стойку, которой у него нет"
-
-/datum/unit_test/combat_extended/shields/proc/check_accessory(list/failures)
-	var/mob/living/carbon/human/H = make_holder(/obj/item/shield/riot)
-	if(!H)
-		failures += "аксессуар: не удалось создать носителя"
-		return
-	var/obj/item/shield/shield = H.l_hand
-	var/obj/item/ce_shield_accessory/unit_test/accessory = new(H.loc)
-	spawned += accessory
-	H.put_in_r_hand(accessory)
-	shield.use_tool(accessory, H, list())
-	if(shield.ce_accessory != accessory || accessory.loc != shield || shield.action_button_name != accessory.action_name)
-		failures += "аксессуар: не повешен на riot"
-		return
-	var/stance = shield.ce_stance
-	shield.ui_action_click(H)
-	if(accessory.activations != 1 || shield.ce_stance != stance)
-		failures += "аксессуар: кнопка действия щита не работает от аксессуара"
-	var/obj/item/screwdriver/screwdriver = new(H.loc)
-	spawned += screwdriver
-	shield.use_tool(screwdriver, H, list())
-	if(shield.ce_accessory || shield.action_button_name || !H.IsHolding(accessory))
-		failures += "аксессуар: отвёртка не снимает его в руки"
-
-	var/mob/living/carbon/human/B = make_holder(/obj/item/shield/buckler)
-	if(!B)
-		failures += "аксессуар: не удалось создать носителя баклера"
-		return
-	var/obj/item/shield/buckler = B.l_hand
-	var/obj/item/ce_shield_accessory/unit_test/refused = new(B.loc)
-	spawned += refused
-	B.put_in_r_hand(refused)
-	if(buckler.ce_attach_accessory(refused, B) || buckler.ce_accessory)
-		failures += "аксессуар: повешен на баклер без места под него"
-
-	// Место под аксессуар — только у riot и пластасталевого щита. Новый подтип riot, унаследовавший
-	// его молча, тест поймает.
-	var/list/with_slot = list(/obj/item/shield/riot, /obj/item/shield/riot/metal)
-	for(var/shield_type in typesof(/obj/item/shield))
-		var/obj/item/shield/shield_path = shield_type
-		var/has_slot = !!initial(shield_path.ce_accessory_slot)
-		if(has_slot != (shield_type in with_slot))
-			failures += "аксессуар: место под него у [shield_type] — [has_slot ? "есть" : "нет"]"
-
-/*
-	Прожектор: кнопка действия щита включает свет, как у аварийного прожектора, а альт-клик куда
-	угодно при включённом свете — вспышка. Погасший прожектор альт-клик не разбирает. Альт-клик
-	по самому щиту в руке — тоже вспышка, про запас. Вспышка слепит того, кого луч освещает и кто
-	смотрит на носителя, и только его: не того, кто смотрит в сторону, не того, кто за спиной
-	носителя, не того, кто в сварочных очках, и не того, до кого луч не доходит из-за занавески.
-	Освещённого, но смотрящего в сторону, и самого носителя вспышка лишь засвечивает, без
-	ослепления; в сварочных очках и вне луча — не засвечивает. Перезарядка не даёт второй вспышки
-	сразу. Свет тест пересчитывает сам (`relight()`), не
-	дожидаясь SSlighting.
-*/
-/datum/unit_test/combat_extended/shields/proc/check_projector(list/failures)
-	var/mob/living/carbon/human/H = make_holder(/obj/item/shield/riot)
-	if(!H)
-		failures += "прожектор: не удалось создать носителя"
-		return
-	var/obj/item/shield/shield = H.l_hand
-	var/obj/item/ce_shield_accessory/projector/projector = new(H.loc)
-	spawned += projector
-	H.put_in_r_hand(projector)
-	shield.use_tool(projector, H, list())
-	if(shield.ce_accessory != projector)
-		failures += "прожектор: не повешен на riot"
-		return
-
-	// Клетка в двух шагах: альт-клик по соседней клетке без клиента упал бы в панели «Turf».
-	var/turf/far_turf = locate(H.x, H.y + 2, H.z)
-	shield.AltClick(H)
-	if(H.AltClickOn(far_turf))
-		failures += "прожектор: погасший разбирает альт-клик куда угодно"
-	if(projector.next_dazzle)
-		failures += "прожектор: выключенный вспыхивает"
-	shield.ui_action_click(H)
-	if(!projector.on || !shield.light || shield.light_range != projector.beam_range || shield.light_power != projector.beam_power || shield.light_wedge != projector.beam_angle)
-		failures += "прожектор: кнопка действия щита не включает свет, как у аварийного прожектора"
-		return
-
-	// Название, смещение от носителя по x и y, куда смотрит, в сварочных очках ли, слепит ли,
-	// засвечивает ли — полной вспышкой или лёгкой.
-	var/list/cases = list(
-		list("смотрит на свет", 0, 2, SOUTH, FALSE, TRUE, TRUE),
-		list("смотрит в сторону", 1, 2, NORTH, FALSE, FALSE, TRUE),
-		list("за спиной носителя", 0, -2, NORTH, FALSE, FALSE, FALSE),
-		list("в сварочных очках", -1, 2, SOUTH, TRUE, FALSE, FALSE),
-		list("в сварочных очках смотрит в сторону", -1, 3, NORTH, TRUE, FALSE, FALSE)
-	)
-	var/list/watchers = list()
-	for(var/list/test_case as anything in cases)
-		var/turf/T = locate(H.x + test_case[2], H.y + test_case[3], H.z)
-		var/mob/living/carbon/human/watcher = make_human()
-		if(!T || !watcher)
-			failures += "прожектор, [test_case[1]]: не удалось поставить человека"
-			continue
-		watcher.forceMove(T)
-		watcher.set_dir(test_case[4])
-		if(test_case[5])
-			var/obj/item/clothing/glasses/welding/goggles = new(T)
-			spawned += goggles
-			watcher.equip_to_slot_or_del(goggles, slot_glasses)
-		watchers[watcher] = test_case
-	if(!length(watchers))
-		return
-	relight(shield)
-	if(!H.AltClickOn(far_turf))
-		failures += "прожектор: альт-клик куда угодно при горящем прожекторе не разобран"
-	for(var/mob/living/carbon/human/watcher as anything in watchers)
-		var/list/test_case = watchers[watcher]
-		var/dazzled = watcher.eye_blurry > 0 && watcher.is_confused()
-		if(dazzled != test_case[6])
-			failures += "прожектор, [test_case[1]]: [dazzled ? "ослеплён" : "не ослеплён"]"
-		var/flashed = !!watcher.screens["flash"]
-		if(flashed != test_case[7])
-			failures += "прожектор, [test_case[1]]: [flashed ? "засвечен" : "не засвечен"]"
-	// Носитель — за прожектором: засвечен, но не ослеплён.
-	if(!H.screens["flash"] || H.eye_blurry || H.is_confused())
-		failures += "прожектор, носитель: засвечен [!!H.screens["flash"]], муть [H.eye_blurry], растерян [H.is_confused()]; ожидалась лёгкая вспышка без ослепления"
-
-	var/mob/living/carbon/human/looker = watchers[1]
-	looker.eye_blurry = 0
-	looker.clear_confused()
-	shield.AltClick(H)
-	if(looker.eye_blurry || looker.is_confused())
-		failures += "прожектор: вторая вспышка прошла сквозь перезарядку"
-
-	projector.next_dazzle = 0
-	var/obj/structure/curtain/curtain = new(locate(H.x, H.y + 1, H.z))
-	spawned += curtain
-	relight(shield)
-	shield.AltClick(H)
-	if(looker.eye_blurry || looker.is_confused())
-		failures += "прожектор: вспышка слепит сквозь занавеску"
-
-	var/obj/item/screwdriver/screwdriver = new(H.loc)
-	spawned += screwdriver
-	shield.use_tool(screwdriver, H, list())
-	if(projector.on || shield.light)
-		failures += "прожектор: снятый со щита продолжает светить"
-
-/// Пересчитывает свет щита сразу, не дожидаясь очереди SSlighting.
-/datum/unit_test/combat_extended/shields/proc/relight(obj/item/shield/shield)
-	var/datum/light_source/beam = shield.light
-	if(!beam)
-		return
-	beam.needs_update = LIGHTING_FORCE_UPDATE
-	beam.update_corners(TRUE)
-	beam.needs_update = LIGHTING_NO_UPDATE
 
 /*
 	Спрайт в руке. Щит с `ce_cover_sprite_moves` в стойке «укрыться» сдвинут: лицом к зрителю
@@ -9207,6 +9168,374 @@
 	mark.forceMove(spot(-2, -2))
 	reset_arena()
 	lift_lane()
+
+
+/*
+	Приземление снарядов с зарядом (`projectile_landing.dm`): ионный заряд, гироджет и ракета
+	кончаются на дальности точки прицела, если раньше ничего не встретили.
+
+	Проверяется:
+	- кто приземляется: ионное оружие, гироджет, ракеты РПГ и меха — да; пули, лучи, трассировщик и
+	  патроны с ионным зарядом — нет;
+	- клик по полу: заряд кончается в щёлкнутой клетке и бьёт в её пол — без клика, с кликом в
+	  середину и в угол клетки; пуля по тому же клику летит дальше;
+	- клик по предмету, которому заряд ничего не сделает, и по пятну крови: заряд кончается в их
+	  клетке и бьёт в пол, а не в предмет;
+	- выстрел в моба: попавший кончается в нём и в пол не бьёт, выстрел по клетке под мобом — тоже;
+	  прошедший мимо тела и посланный в отошедшего моба кончается в клетке моба;
+	- разброс: заряд ложится на дальности клика, и в стороне от щёлкнутой клетки тоже, а дальше не
+	  летит;
+	- срезанный угол: точка приземления в нём — заряд кончается в нём на том же шаге; угол срезан
+	  тоньше порога — на первом шаге за дальностью клика;
+	- без попиксельной стрельбы заряд приземляется так же;
+	- рикошет и `redirect()` приземление снимают;
+	- патрон с ионным зарядом по клику в пол летит дальше, как пуля;
+	- ракета РПГ по клику в пол ближе трёх клеток не взрывается, дальше — взрывается в щёлкнутой
+	  клетке, хоть та и в одной зоне со стрелком.
+
+	Тест — подтип теста физических попаданий: ему нужны те же площадка, мишень и шаги полёта.
+*/
+
+/// Ионный заряд, который вместо ЭМИ запоминает, во что попал и где кончился.
+/obj/item/projectile/ion/ce_test_landing
+	/// Цели `on_hit()`, по порядку.
+	var/list/ce_hit_targets = list()
+	/// Цели `on_impact()`, по порядку.
+	var/list/ce_impacts = list()
+	/// Клетка снаряда при `on_impact()`.
+	var/turf/ce_impact_turf
+
+/obj/item/projectile/ion/ce_test_landing/on_hit(atom/target, blocked = 0, def_zone = null)
+	ce_hit_targets += target
+	return ..()
+
+/obj/item/projectile/ion/ce_test_landing/on_impact(atom/A)
+	ce_impacts += A
+	ce_impact_turf = get_turf(src)
+
+/// Ракета РПГ, которая запоминает, где взорвалась бы.
+/obj/item/projectile/bullet/rpg_rocket/ce_test_landing
+	var/turf/ce_explosion_turf
+
+/obj/item/projectile/bullet/rpg_rocket/ce_test_landing/on_explosion(turf/O)
+	ce_explosion_turf = O
+
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing
+	name = "CE: Приземление снарядов с зарядом"
+
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/start_test()
+	if(!claim_arena())
+		return 1
+	var/mob/living/carbon/human/ce_test_target/mark = make_human(null, /mob/living/carbon/human/ce_test_target)
+	if(!mark)
+		fail("Не удалось создать мишень.")
+		return 1
+
+	var/old_pixel_aim = ce_pixel_aim_enabled
+	var/old_physical_hits = ce_physical_hits_enabled
+	var/old_debug = ce_aim_debug
+	var/old_tolerance = ce_corner_cut_tolerance
+	var/old_ricochet = ce_ricochet_enabled
+	var/old_miss_per_tile = ce_miss_per_tile
+	var/list/old_zone_chances = ce_zone_miss_chances
+	ce_pixel_aim_enabled = TRUE
+	ce_physical_hits_enabled = TRUE
+	ce_aim_debug = FALSE
+	ce_corner_cut_tolerance = 4
+	ce_ricochet_enabled = FALSE
+	// Броски попадают наверняка: в грудь, без поправки за расстояние.
+	ce_zone_miss_chances = old_zone_chances.Copy()
+	ce_zone_miss_chances[BP_CHEST] = 0
+	ce_miss_per_tile = 0
+	var/list/failures = list()
+
+	check_landing_types(failures)
+	pave_arena(/turf/simulated/floor/airless)
+	// Мишень ждёт в углу площадки, в стороне от всех линий полёта.
+	mark.forceMove(spot(-2, 2))
+	check_floor_landing(failures)
+	check_item_landing(failures)
+	check_mob_landing(failures, mark)
+	check_spread_landing(failures)
+	check_corner_landing(failures)
+	check_landing_switch(failures)
+	check_landing_cancel(failures)
+	check_haywire_flight(failures)
+	check_rocket_arming(failures)
+
+	ce_pixel_aim_enabled = old_pixel_aim
+	ce_physical_hits_enabled = old_physical_hits
+	ce_aim_debug = old_debug
+	ce_corner_cut_tolerance = old_tolerance
+	ce_ricochet_enabled = old_ricochet
+	ce_miss_per_tile = old_miss_per_tile
+	ce_zone_miss_chances = old_zone_chances
+	reset_arena()
+	cleanup()
+	pave_arena(/turf/space)
+	var/arena_problem = describe_arena_problem()
+	if(arena_problem)
+		failures += "площадка после теста: [arena_problem]"
+	if(length(failures))
+		fail(jointext(failures, "\n"))
+	else
+		pass("Ионный заряд, гироджет и ракеты кончаются на дальности клика: в щёлкнутой клетке, в клетке предмета и моба, мимо которого прошли, с разбросом — в стороне на той же дальности; попавший кончается в цели, рикошет и перенацеливание приземление снимают, патроны с ионным зарядом летят как пули, а ракета РПГ взводится по дальности до клетки.")
+	return 1
+
+/**
+ * Снаряд типа `projectile_type` из клетки `start`, нацеленный в `target`. `click` — пиксель клика по
+ * ней, `list(x, y)`, без него клика нет.
+ */
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/fire_at(atom/target, turf/start, list/click, projectile_type = /obj/item/projectile/ion/ce_test_landing, dispersion = 0)
+	RETURN_TYPE(/obj/item/projectile)
+	var/obj/item/projectile/projectile = make_projectile(projectile_type, start)
+	projectile.dispersion = dispersion
+	projectile.no_attack_log = TRUE
+	projectile.def_zone = BP_CHEST
+	if(click)
+		projectile.set_clickpoint(click_at(click[1], click[2]))
+	projectile.original = target
+	projectile.setup_trajectory(start, get_turf(target))
+	return projectile
+
+/// Ведёт снаряд шагами полёта, пока он не кончится, но не больше `max_steps`. На каком шаге он
+/// кончился; null — цел.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/fly_out(obj/item/projectile/projectile, max_steps = 6)
+	for(var/index in 1 to max_steps)
+		if(!fly_at_target(projectile))
+			return index
+	return null
+
+/// Заряд приземлился в клетке `floor`: кончился, ударил в её пол и только в него. Кор `Process()`
+/// зовёт `Move()` и после приземления: удалённый снаряд на карту не возвращается.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/landed_on(obj/item/projectile/ion/ce_test_landing/shot, turf/floor)
+	if(!QDELETED(shot) || shot.loc || shot.ce_impact_turf != floor)
+		return FALSE
+	return length(shot.ce_impacts) == 1 && shot.ce_impacts[1] == floor && length(shot.ce_hit_targets) == 1 && shot.ce_hit_targets[1] == floor
+
+/// Что сделал заряд — для строки провала.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/describe_shot(obj/item/projectile/ion/ce_test_landing/shot)
+	return "заряд цел — [!QDELETED(shot)], кончился в клетке [describe_spot(shot.ce_impact_turf)], `on_impact()` по [jointext(shot.ce_impacts, ", ")], `on_hit()` по [jointext(shot.ce_hit_targets, ", ")]"
+
+/// Клетка площадки сдвигом от её середины.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/describe_spot(turf/place)
+	if(!place)
+		return "нет"
+	return "[place.x - center.x],[place.y - center.y]"
+
+/// Приземляются ионное оружие, гироджет, ракеты РПГ и меха; пули, лучи, трассировщик и патроны с
+/// ионным зарядом — нет.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_landing_types(list/failures)
+	var/obj/item/gun/energy/ion_rifle = /obj/item/gun/energy/ionrifle
+	var/obj/item/gun/energy/ion_pistol = /obj/item/gun/energy/ionrifle/small
+	var/list/landing = list(
+		initial(ion_rifle.projectile_type),
+		initial(ion_pistol.projectile_type),
+		/obj/item/projectile/bullet/gyro,
+		/obj/item/projectile/bullet/gyro/megabot,
+		/obj/item/projectile/bullet/rpg_rocket/frag,
+		/obj/item/projectile/bullet/rpg_rocket/heat/tandem,
+		/obj/item/projectile/bullet/rocket/fugas,
+		/obj/item/projectile/bullet/rocket/fire
+	)
+	var/list/flying = list(
+		/obj/item/projectile,
+		/obj/item/projectile/test,
+		/obj/item/projectile/bullet/pistol,
+		/obj/item/projectile/beam
+	)
+	var/list/haywire_casings = list(
+		/obj/item/ammo_casing/pistol/emp,
+		/obj/item/ammo_casing/pistol/small/emp,
+		/obj/item/ammo_casing/shotgun/emp
+	)
+	for(var/obj/item/ammo_casing/casing as anything in haywire_casings)
+		var/haywire_type = initial(casing.projectile_type)
+		if(!ispath(haywire_type, /obj/item/projectile/ion))
+			failures += "кто приземляется: патрон [casing] стреляет не ионным зарядом, а [haywire_type]"
+		flying += haywire_type
+	for(var/obj/item/projectile/path as anything in landing)
+		if(!initial(path.ce_lands_at_aim))
+			failures += "кто приземляется: [path] летит до первой преграды"
+	for(var/obj/item/projectile/path as anything in flying)
+		if(initial(path.ce_lands_at_aim))
+			failures += "кто приземляется: [path] приземляется"
+
+/// Клик по полу: заряд кончается в щёлкнутой клетке и бьёт в её пол; пуля по тому же клику летит
+/// дальше.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_floor_landing(list/failures)
+	var/turf/start = spot(-2, 0)
+	var/turf/floor = spot(1, 0)
+	// list(подпись, пиксель клика). В клетку 1,0 заряд входит третьим шагом и кончается в начале
+	// четвёртого.
+	var/list/cases = list(
+		list("без клика", null),
+		list("в середину", list(16, 16)),
+		list("в угол", list(3, 28))
+	)
+	for(var/list/entry as anything in cases)
+		var/obj/item/projectile/ion/ce_test_landing/shot = fire_at(floor, start, entry[2])
+		var/steps = fly_out(shot)
+		if(steps != 4 || !landed_on(shot, floor))
+			failures += "клик по полу, [entry[1]]: шагов [steps || "больше 6"], ожидалось 4; [describe_shot(shot)]"
+	var/obj/item/projectile/bullet/pistol/ce_test_counting/bullet = fire_at(floor, start, null, /obj/item/projectile/bullet/pistol/ce_test_counting)
+	if(!fly_steps(bullet, 4) || bullet.loc != spot(2, 0))
+		failures += "клик по полу: пуля кончилась, не долетев до клетки за щёлкнутой — цела — [!QDELETED(bullet)]"
+	spend(bullet)
+	reset_arena()
+
+/// Клик по предмету, которому заряд ничего не сделает, и по пятну крови: заряд кончается в их клетке
+/// и бьёт в пол, а не в предмет.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_item_landing(list/failures)
+	var/turf/start = spot(-2, 0)
+	var/turf/place = spot(0, 0)
+	var/obj/item/device/flashlight/thing = put(0, 0, /obj/item/device/flashlight)
+	var/obj/decal/cleanable/blood/blood = put(0, 0, /obj/decal/cleanable/blood)
+	if(QDELETED(thing) || QDELETED(blood))
+		failures += "клик по предмету: фонарик или пятно крови не создались"
+		reset_arena()
+		return
+	for(var/atom/target as anything in list(thing, blood))
+		var/obj/item/projectile/ion/ce_test_landing/shot = fire_at(target, start, list(16, 16))
+		var/steps = fly_out(shot)
+		if(steps != 3 || !landed_on(shot, place))
+			failures += "клик по предмету, [target]: шагов [steps || "больше 6"], ожидалось 3; [describe_shot(shot)]"
+	reset_arena()
+
+/**
+ * Выстрел в моба: попавший кончается в нём и в пол не бьёт, выстрел по клетке под мобом — тоже.
+ * Прошедший мимо тела и посланный в отошедшего моба кончается в клетке моба.
+ */
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_mob_landing(list/failures, mob/living/carbon/human/ce_test_target/mark)
+	var/turf/start = spot(-2, 0)
+	var/turf/place = spot(1, 0)
+	mark.forceMove(place)
+	for(var/atom/target as anything in list(mark, place))
+		var/hits_before = mark.ce_hits
+		var/obj/item/projectile/ion/ce_test_landing/hit = fire_at(target, start)
+		var/hit_steps = fly_out(hit)
+		if(hit_steps != 3 || mark.ce_hits != hits_before + 1 || length(hit.ce_impacts) != 1 || hit.ce_impacts[1] != mark || length(hit.ce_hit_targets))
+			failures += "выстрел [target == mark ? "в моба" : "по клетке под мобом"]: шагов [hit_steps || "больше 6"], ожидалось 3; попаданий [mark.ce_hits - hits_before]; [describe_shot(hit)]"
+
+	// Тело сдвинуто от линии на 18 пикселей — дальше его радиуса: заряд проходит мимо.
+	var/hits_before_miss = mark.ce_hits
+	var/obj/item/projectile/ion/ce_test_landing/past = fire_at(mark, start)
+	mark.pixel_y = mark.default_pixel_y + 18
+	var/past_steps = fly_out(past)
+	mark.pixel_y = mark.default_pixel_y
+	if(past_steps != 4 || mark.ce_hits != hits_before_miss || !(mark in past.permutated) || !landed_on(past, place))
+		failures += "выстрел в моба мимо тела: шагов [past_steps || "больше 6"], ожидалось 4; попаданий [mark.ce_hits - hits_before_miss], моб пройден — [mark in past.permutated]; [describe_shot(past)]"
+
+	// Моб отошёл, пока заряд летел: заряд кончается там, где моб стоял.
+	var/obj/item/projectile/ion/ce_test_landing/gone = fire_at(mark, start)
+	mark.forceMove(spot(-2, 2))
+	var/gone_steps = fly_out(gone)
+	if(gone_steps != 4 || !landed_on(gone, place))
+		failures += "выстрел в отошедшего моба: шагов [gone_steps || "больше 6"], ожидалось 4; [describe_shot(gone)]"
+	reset_arena()
+
+/// Разброс: заряд ложится на дальности клика, и в стороне от щёлкнутой клетки тоже, а дальше не летит.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_spread_landing(list/failures)
+	var/turf/start = spot(-2, 0)
+	var/turf/floor = spot(1, 0)
+	// Дуга 36°: на трёх клетках заряд уходит от середины клетки до 30 пикселей в сторону.
+	var/spread_dispersion = 36 / ce_dispersion_arc_degrees
+	var/aside = 0
+	for(var/trial in 1 to CE_AIM_TRIALS)
+		var/obj/item/projectile/ion/ce_test_landing/shot = fire_at(floor, start, null, dispersion = spread_dispersion)
+		var/steps = fly_out(shot)
+		var/turf/landed = shot.ce_impact_turf
+		if(isnull(steps) || !landed || landed.x != floor.x || abs(landed.y - floor.y) > 1)
+			failures += "разброс: заряд кончился в клетке [describe_spot(landed)], ожидалась [describe_spot(floor)] или соседняя по вертикали; [describe_shot(shot)]"
+			break
+		if(landed != floor)
+			aside++
+	// Отклонение больше 9.6° уводит точку из щёлкнутой клетки: так ложится почти каждый второй заряд.
+	if(!aside)
+		failures += "разброс: ни один из [CE_AIM_TRIALS] зарядов не лёг в стороне от щёлкнутой клетки"
+	reset_arena()
+
+/**
+ * Срезанный угол: точка приземления в клетке, угол которой линия полёта только срезает, — заряд
+ * кончается в ней на том же шаге. С порогом длиннее среза угол не проверяется, и заряд кончается на
+ * первом шаге за дальностью клика.
+ */
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_corner_landing(list/failures)
+	// Клик в пиксель 4,29 клетки 1,0: точка прицела — в 19.5 пикселя восточнее и в 12.5 севернее
+	// середины клетки стрелка. Первая точка вектора — в клетке 1,1, а клетку 1,0 линия срезает на
+	// 10.6 пикселя.
+	var/turf/corner = spot(1, 0)
+	var/obj/item/projectile/ion/ce_test_landing/cut = fire_at(corner, center, list(4, 29))
+	var/cut_steps = fly_out(cut)
+	if(cut_steps != 1 || !landed_on(cut, corner))
+		failures += "срезанный угол: шагов [cut_steps || "больше 6"], ожидался 1; [describe_shot(cut)]"
+	ce_corner_cut_tolerance = 100
+	var/obj/item/projectile/ion/ce_test_landing/skipped = fire_at(corner, center, list(4, 29))
+	var/skipped_steps = fly_out(skipped)
+	ce_corner_cut_tolerance = 4
+	if(skipped_steps != 2 || !landed_on(skipped, spot(1, 1)))
+		failures += "срезанный угол тоньше порога: шагов [skipped_steps || "больше 6"], ожидалось 2 и клетка 1,1; [describe_shot(skipped)]"
+	reset_arena()
+
+/// Без попиксельной стрельбы заряд приземляется так же: в щёлкнутой клетке и в клетке предмета.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_landing_switch(list/failures)
+	var/turf/start = spot(-2, 0)
+	var/turf/floor = spot(1, 0)
+	var/obj/item/device/flashlight/thing = put(0, 0, /obj/item/device/flashlight)
+	ce_pixel_aim_enabled = FALSE
+	var/obj/item/projectile/ion/ce_test_landing/at_floor = fire_at(floor, start, list(3, 28))
+	var/floor_steps = fly_out(at_floor)
+	var/obj/item/projectile/ion/ce_test_landing/at_thing = fire_at(thing, start)
+	var/thing_steps = fly_out(at_thing)
+	ce_pixel_aim_enabled = TRUE
+	if(floor_steps != 4 || !landed_on(at_floor, floor))
+		failures += "без прицела, клик по полу: шагов [floor_steps || "больше 6"], ожидалось 4; [describe_shot(at_floor)]"
+	if(thing_steps != 3 || !landed_on(at_thing, spot(0, 0)))
+		failures += "без прицела, клик по предмету: шагов [thing_steps || "больше 6"], ожидалось 3; [describe_shot(at_thing)]"
+	reset_arena()
+
+/// Рикошет и `redirect()` приземление снимают.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_landing_cancel(list/failures)
+	var/turf/start = spot(-2, 0)
+	var/turf/floor = spot(1, 0)
+	var/obj/item/projectile/ion/ce_test_landing/redirected = fire_at(floor, start)
+	var/planned = redirected.ce_landing_turf == floor
+	redirected.redirect(start.x, start.y + 2, floor)
+	if(!planned || redirected.ce_landing_turf)
+		failures += "перенацеливание: приземление в щёлкнутой клетке намечено — [planned], осталось после `redirect()` — [!!redirected.ce_landing_turf]"
+	var/obj/item/projectile/ion/ce_test_landing/bounced = fire_at(floor, start)
+	bounced.ce_reflect_trajectory(CE_RICOCHET_AXIS_X)
+	if(bounced.ce_landing_turf)
+		failures += "рикошет: приземление осталось после него"
+	spend(redirected)
+	spend(bounced)
+	reset_arena()
+
+/// Патрон с ионным зарядом по клику в пол летит дальше, как пуля.
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_haywire_flight(list/failures)
+	var/obj/item/ammo_casing/haywire = /obj/item/ammo_casing/pistol/emp
+	var/obj/item/projectile/shot = fire_at(spot(0, 0), spot(-2, 0), null, initial(haywire.projectile_type))
+	if(!fly_steps(shot, 3) || shot.loc != spot(1, 0))
+		failures += "патрон с ионным зарядом: по клику в пол кончился, не долетев до клетки за щёлкнутой — цел — [!QDELETED(shot)]"
+	spend(shot)
+	reset_arena()
+
+/**
+ * Ракета РПГ по клику в пол ближе трёх клеток не взрывается, дальше — взрывается в щёлкнутой клетке,
+ * хоть та и в одной зоне со стрелком: дальность взведения считается до клетки.
+ */
+/datum/unit_test/combat_extended/pixel_aim/physical_hits/landing/proc/check_rocket_arming(list/failures)
+	var/turf/start = spot(-2, 0)
+	var/rocket_type = /obj/item/projectile/bullet/rpg_rocket/ce_test_landing
+	var/obj/item/projectile/bullet/rpg_rocket/ce_test_landing/close = fire_at(spot(0, 0), start, null, rocket_type)
+	var/close_steps = fly_out(close)
+	var/obj/item/projectile/bullet/rpg_rocket/ce_test_landing/armed = fire_at(spot(2, 0), start, null, rocket_type)
+	var/armed_steps = fly_out(armed)
+	if(close_steps != 3 || close.ce_explosion_turf)
+		failures += "взведение ракеты, две клетки: шагов [close_steps || "больше 6"], ожидалось 3; взрыв в клетке [describe_spot(close.ce_explosion_turf)], ожидалось без взрыва"
+	if(armed_steps != 5 || armed.ce_explosion_turf != spot(2, 0))
+		failures += "взведение ракеты, четыре клетки: шагов [armed_steps || "больше 6"], ожидалось 5; взрыв в клетке [describe_spot(armed.ce_explosion_turf)], ожидался в 2,0"
+	reset_arena()
 
 #undef CE_AIM_TOLERANCE
 #undef CE_AIM_DIRECTION_TOLERANCE

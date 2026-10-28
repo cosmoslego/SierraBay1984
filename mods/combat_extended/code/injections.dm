@@ -72,7 +72,13 @@
 		return FALSE
 	if(!(def_zone in ce_injection_dodge_zones))
 		return FALSE
-	return world.time - l_move_time < ce_injection_still_time
+	return ce_moved_within(ce_injection_still_time)
+
+
+/// Двигался ли моб за последние `duration` децисекунд: шагом, или его толкали и тянули.
+/// Ноль и меньше — нет.
+/mob/living/proc/ce_moved_within(duration)
+	return world.time - l_move_time < duration
 
 
 /**

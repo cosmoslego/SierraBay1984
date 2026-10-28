@@ -264,8 +264,10 @@
 
 
 /// Зеркалит вектор полёта по составляющей `axis` и поворачивает за ним спрайт и эффекты
-/// (`ce_turn_to_trajectory()`, `projectile_aim.dm`).
+/// (`ce_turn_to_trajectory()`, `projectile_aim.dm`). Отскочивший снаряд летит уже не туда, куда
+/// целились, и не приземляется (`projectile_landing.dm`).
 /obj/item/projectile/proc/ce_reflect_trajectory(axis)
+	ce_cancel_landing()
 	trajectory.ce_reflect(axis, ce_ricochet_scatter_degrees)
 	location = trajectory.return_location(location)
 	ce_turn_to_trajectory()

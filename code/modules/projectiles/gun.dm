@@ -501,7 +501,7 @@
 				else
 					acc_mod += bulk / 5
 					acc_mod += accuracy * 0.25
-		if(7) //machine gun, RPG
+		if(7 to INFINITY) //machine gun, RPG and heavier: AMR, L6, railguns // [SIERRA-EDIT] - COMBAT_EXTENDED - was if(7): bulk 8 and 10 fell out of every branch
 			if (user.skill_check(SKILL_HAULING, SKILL_TRAINED) && user.skill_check(SKILL_WEAPONS, SKILL_BASIC))
 				if(user.skill_check(SKILL_HAULING, SKILL_TRAINED) && user.skill_check(SKILL_WEAPONS, SKILL_TRAINED))
 					if(user.skill_check(SKILL_HAULING, SKILL_EXPERIENCED) && user.skill_check(SKILL_WEAPONS, SKILL_EXPERIENCED))

@@ -19,7 +19,9 @@
 	- оверрайд `setup_trajectory()` после кор версии нацеливает вектор в эту точку
 	  (`ce_aim_trajectory()`): угол не округляется, разброс оружия идёт дробными градусами;
 	- оверрайд `Move()` на диагональном шаге сперва проводит снаряд через клетку, угол которой
-	  линия полёта срезает (`ce_pass_cut_corner()`): сквозь угол стены выстрел не проходит.
+	  линия полёта срезает (`ce_pass_cut_corner()`): сквозь угол стены выстрел не проходит;
+	- снаряд с зарядом — ионный, ракета — кончается на дальности точки прицела
+	  (`projectile_landing.dm`).
 
 	Шаг вектора остаётся по правилу Бэй — по большей оси ровно клетка, — и столкновения остаются
 	клеточными. Координаты — пиксели вектора: середина клетки `T` лежит в `T.x * 32`, `T.y * 32`.
@@ -245,7 +247,10 @@
 	// Пиксель клика — в координатах иконки того, по чему щёлкнули, даже когда целью стала клетка.
 	var/atom/clicked = original
 	ce_take_floor_target()
+	// Вектор Бэй идёт в середину клетки цели: на её дальности снаряд и приземляется
+	// (`projectile_landing.dm`).
 	if(!ce_pixel_aim_enabled)
+		ce_plan_landing(clicked.ce_get_tile_center())
 		return
 	var/list/aim_point = clicked.ce_get_aim_point(ce_click_icon_x, ce_click_icon_y)
 	if(!aim_point)
@@ -255,6 +260,7 @@
 	var/deviation = (rand() - 0.5) * spread_arc
 	if(!trajectory.ce_aim_at(aim_point[1], aim_point[2], deviation))
 		return
+	ce_plan_landing(aim_point)
 	ce_turn_to_trajectory()
 	ce_set_clickpoint_on_line(aim_point)
 	if(ce_aim_debug)
@@ -414,6 +420,9 @@
 	// Дальше — прямой шаг из угла, а летит снаряд по диагонали (`ce_face_travel()`).
 	ce_travel_dir = step_dir
 	if(!ce_meet_corner_bodies(corner))
+		return FALSE
+	// Точка приземления лежит в срезанном углу: снаряд кончается в нём (`projectile_landing.dm`).
+	if(ce_land_if_due())
 		return FALSE
 	location = trajectory.return_location(location)
 	return TRUE

@@ -18,7 +18,6 @@
 #include "clothing\head\berets.dm"
 #include "clothing\head\head.dm"
 #include "clothing\head\helmet.dm"
-#include "clothing\accessories\armor.dm"
 #include "clothing\accessories\badge.dm"
 #include "clothing\accessories\other.dm"
 #include "clothing\accessories\pins.dm"

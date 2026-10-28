@@ -61,9 +61,10 @@
  * как порог, который якобы гасит любой удар слабее, а на деле это вычитается из ПРОБИТИЯ атаки.
  *
  * Для острых атак печатаются ОБА числа: острое пробитие и тот импульс, который прилетит, если
- * острую часть остановят. `damage` — урон снаряда либо `force` оружия.
+ * острую часть остановят. `damage` — урон снаряда либо `force` оружия. `blunt_pen` — собственное
+ * тупое пробитие снаряда, Bay МПа; null — выводится из урона.
  */
-/proc/ce_attack_codex_line(damage, damage_flags, armor_pen = 0, label = "Penetration", list/extra_lines)
+/proc/ce_attack_codex_line(damage, damage_flags, armor_pen = 0, label = "Penetration", list/extra_lines, blunt_pen)
 	if(damage <= 0)
 		return null
 
@@ -71,8 +72,9 @@
 	if(ce_is_sharp_attack(damage_flags))
 		lines += "[round(ce_derive_penetration(damage, damage_flags, armor_pen), 0.1)] mm RHA"
 
-	var/blunt = ce_derive_blunt_penetration(damage, damage_flags, armor_pen) / CE_BLUNT_DISPLAY_DIVISOR
-	lines += "[round(blunt, 0.1)] MPa impact"
+	if(isnull(blunt_pen))
+		blunt_pen = ce_derive_blunt_penetration(damage, damage_flags, armor_pen)
+	lines += "[round(blunt_pen / CE_BLUNT_DISPLAY_DIVISOR, 0.1)] MPa impact"
 
 	if(extra_lines)
 		lines += extra_lines
@@ -142,7 +144,8 @@
 		projectile_flags,
 		initial(projectile.armor_penetration),
 		label,
-		extra_lines
+		extra_lines,
+		initial(projectile.ce_blunt_penetration)
 	)
 
 

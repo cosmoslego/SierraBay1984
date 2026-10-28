@@ -91,17 +91,6 @@
 
 
 /*
-	COMBAT_EXTENDED — вспышка прожектора на щит по альт-клику куда угодно
-	(`mods/combat_extended/code/items/accessories/shield_projector.dm`). Разбирается первой и только
-	пока прожектор на щите в руке горит; иначе альт-клик идёт дальше, как обычно.
-*/
-/mob/living/carbon/human/AltClickOn(atom/A)
-	if(ce_flare_held_projector())
-		return TRUE
-	return ..()
-
-
-/*
 	COMBAT_EXTENDED — кольцо разброса (`mods/combat_extended/code/spread_ring.dm`) целится туда, куда
 	вошла мышь, и туда, куда её ведут с зажатой кнопкой. Здесь, а не в моде: модам и картам, которые
 	переопределяют эти обработчики без `..()`, — подсказкам экрана, боевому режиму — `_master_files`

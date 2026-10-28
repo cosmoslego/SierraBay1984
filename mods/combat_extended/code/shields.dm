@@ -51,10 +51,6 @@
 	var/ce_cover_sprite_moves = FALSE
 	/// Отражать ли спрайт в правой руке лицом на запад: у части щитов Bay он нарисован задом наперёд.
 	var/ce_flip_right_west_sprite = FALSE
-	/// Можно ли повесить на щит аксессуар.
-	var/ce_accessory_slot = FALSE
-	/// Аксессуар на щите.
-	var/obj/item/ce_shield_accessory/ce_accessory
 
 
 /mob/living/carbon/human
@@ -477,16 +473,13 @@ GLOBAL_LIST_EMPTY(ce_shield_hand_icons)
 	return (left + right) / 2
 
 
-/// Строки осмотра щита: состояние брони, как у одежды (`_master_files/.../_clothing.dm`), аксессуар и стойка.
+/// Строки осмотра щита: состояние брони, как у одежды (`_master_files/.../_clothing.dm`), и стойка.
 /obj/item/shield/proc/ce_get_examine_lines()
 	RETURN_TYPE(/list)
 	. = list()
 	var/datum/extension/armor/armor = get_extension(src, /datum/extension/armor)
 	for(var/line in armor?.ce_get_condition_lines())
 		. += SPAN_WARNING(line)
-	if(ce_accessory)
-		. += SPAN_NOTICE("\A [ce_accessory] is mounted on it.")
-		. += ce_accessory.get_shield_examine_lines(src)
 	if(!ce_shields_enabled || !ce_stance_switchable)
 		return
 	if(ce_in_cover())
@@ -530,77 +523,5 @@ GLOBAL_LIST_EMPTY(ce_shield_hand_icons)
 /mob/living/carbon/human/proc/ce_note_melee_attack(cooldown)
 	if(ce_shields_enabled && ce_get_cover_shield())
 		ce_shield_melee_exposed_until = world.time + cooldown
-
-
-// ============================================================================================
-// Аксессуар
-// ============================================================================================
-
-/**
- * Аксессуар щита. Вешается на щит с `ce_accessory_slot`, снимается отвёрткой и работает от кнопки
- * действия щита, а подтип может разобрать и альт-клик по щиту в руке. Первый — прожектор
- * (`code/items/accessories/shield_projector.dm`).
- */
-/obj/item/ce_shield_accessory
-	abstract_type = /obj/item/ce_shield_accessory
-	w_class = ITEM_SIZE_SMALL
-	/// Надпись на кнопке действия щита с этим аксессуаром.
-	var/action_name = "Use Shield Accessory"
-
-/// Кнопка действия щита с этим аксессуаром.
-/obj/item/ce_shield_accessory/proc/activate(mob/living/user, obj/item/shield/shield)
-	return
-
-/// Альт-клик по щиту в руке с этим аксессуаром. TRUE — клик разобран, FALSE — пусть идёт дальше.
-/obj/item/ce_shield_accessory/proc/alt_activate(mob/living/user, obj/item/shield/shield)
-	return FALSE
-
-/// Аксессуар только что повешен на щит.
-/obj/item/ce_shield_accessory/proc/on_attached(obj/item/shield/shield, mob/living/user)
-	return
-
-/// Аксессуар снимают со щита: он ещё на нём.
-/obj/item/ce_shield_accessory/proc/on_removed(obj/item/shield/shield, mob/living/user)
-	return
-
-/// Строки осмотра щита с этим аксессуаром.
-/obj/item/ce_shield_accessory/proc/get_shield_examine_lines(obj/item/shield/shield)
-	RETURN_TYPE(/list)
-	return list()
-
-
-/obj/item/shield/proc/ce_attach_accessory(obj/item/ce_shield_accessory/accessory, mob/living/user)
-	if(!ce_accessory_slot)
-		to_chat(user, SPAN_WARNING("\The [accessory] doesn't fit on \the [src]."))
-		return FALSE
-	if(ce_accessory)
-		to_chat(user, SPAN_WARNING("\The [src] already has \a [ce_accessory] mounted."))
-		return FALSE
-	if(!user.unEquip(accessory, src))
-		return FALSE
-	ce_accessory = accessory
-	action_button_name = accessory.action_name
-	accessory.on_attached(src, user)
-	user.visible_message(
-		SPAN_NOTICE("\The [user] mounts \a [accessory] on \the [src]."),
-		SPAN_NOTICE("You mount \the [accessory] on \the [src].")
-	)
-	return TRUE
-
-
-/obj/item/shield/proc/ce_remove_accessory(mob/living/user)
-	if(!ce_accessory)
-		return FALSE
-	var/obj/item/ce_shield_accessory/accessory = ce_accessory
-	accessory.on_removed(src, user)
-	ce_accessory = null
-	action_button_name = null
-	QDEL_NULL(action)
-	user.put_in_hands(accessory)
-	user.visible_message(
-		SPAN_NOTICE("\The [user] unmounts \the [accessory] from \the [src]."),
-		SPAN_NOTICE("You unmount \the [accessory] from \the [src].")
-	)
-	return TRUE
 
 #undef CE_SHIELD_ARC_EPSILON

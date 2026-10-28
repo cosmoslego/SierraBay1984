@@ -32,7 +32,7 @@ GLOBAL_VAR_AS(war_declared, FALSE)
 /datum/uplink_item/item/structures_and_vehicles/combat_mech
 	name = "Combat Mech"
 	var/static/BOUGHT_MECH = 0
-	desc = "A terrible and at the same time beautiful combat mech to destroy all living things in your way. Comes with laser and energy drone! Have NO armour plates."
+	desc = "A terrible and at the same time beautiful combat mech to destroy all living things in your way. Comes with an SMG, an electrolaser carbine, a flash, floodlights and a shield droid! Has NO armour plates."
 	item_cost = 300
 	antag_roles = list(MODE_MERCENARY)
 

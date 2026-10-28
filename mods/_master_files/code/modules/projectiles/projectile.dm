@@ -2,7 +2,8 @@
 	COMBAT_EXTENDED — снаряд, остановленный бронёй, в тело не входит (`projectile_effects.dm`),
 	задевший стену вскользь — рикошетит (`projectile_ricochet.dm`), летит он в пиксель, по
 	которому щёлкнули (`projectile_aim.dm`), а пройдя мимо тела, летит дальше без броска
-	(`projectile_hits.dm`).
+	(`projectile_hits.dm`). Снаряд с зарядом кончается на дальности точки прицела
+	(`projectile_landing.dm`).
 */
 
 /**
@@ -93,6 +94,10 @@
  */
 /obj/item/projectile/Move(newloc, direct)
 	. = FALSE
+	// Снаряд, приземлившийся в начале шага, уже удалён, а кор `Process()` зовёт `Move()` следом
+	// (`before_move()` ниже).
+	if(QDELETED(src))
+		return
 	ce_bump_resolved = FALSE
 	ce_travel_dir = isturf(newloc) ? get_dir(src, newloc) : null
 	if(ce_pass_cut_corner(newloc))
@@ -100,3 +105,21 @@
 		ce_bump_resolved = FALSE
 		. = ..()
 	ce_travel_dir = null
+
+
+/**
+ * Снаряд с зарядом — ионный, ракета — кончается на дальности точки прицела: в начале шага после
+ * того, как вошёл в клетку точки приземления (`/mods/combat_extended/code/projectile_landing.dm`).
+ * Моб и предмет в этой клетке встречают его раньше: кор `Process()` проверяет `original` после
+ * `Move()`.
+ */
+/obj/item/projectile/before_move()
+	. = ..()
+	ce_land_if_due()
+
+
+/// Перенацеленный снаряд — отражённый бронёй, конструктом — летит уже не туда, куда целились, и не
+/// приземляется (`/mods/combat_extended/code/projectile_landing.dm`).
+/obj/item/projectile/redirect(new_x, new_y, atom/starting_loc, mob/new_firer = null)
+	ce_cancel_landing()
+	return ..()

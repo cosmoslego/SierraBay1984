@@ -141,7 +141,7 @@
 		base_blunt_pen = explicit.pen
 	else
 		base_pen = ce_derive_penetration(damage, damage_flags, armor_pen)
-		base_blunt_pen = ce_derive_blunt_penetration(damage, damage_flags, armor_pen)
+		base_blunt_pen = ce_get_attack_blunt_penetration(damage, damage_type, damage_flags, armor_pen)
 	var/base_damage = damage
 	var/pen = base_pen
 	var/was_sharp = ce_is_sharp_attack(damage_flags)
