@@ -1,0 +1,4 @@
+author: AttHawk
+changes:
+  - bugfix: Пофиксил баг при экзамайне электрода для тазера
+delete-after: true
